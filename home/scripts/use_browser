@@ -1,0 +1,9 @@
+#!/bin/bash
+
+windows=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == "$(hyprctl activewindow -j | jq -r '.workspace.id')\)"" | jq -r ".class")
+
+if [[ $windows == *"google-chrome"* ]]; then
+  google-chrome-stable "$1"
+else
+  google-chrome-stable --new-window "$1"
+fi

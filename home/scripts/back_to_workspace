@@ -1,0 +1,54 @@
+#!/bin/bash
+
+names_string=$(hyprctl workspaces -j | jq -r '.[].name')
+ids_string=$(hyprctl workspaces -j | jq -r '.[].id')
+current_space=$(hyprctl activeworkspace -j | jq -r .name)
+
+IFS=$'\n' read -r -d '' -a names_array <<<"$names_string"
+IFS=$'\n' read -r -d '' -a ids_array <<<"$ids_string"
+
+history_file="/tmp/workspace_history"
+mapfile -t history <"$history_file"
+
+# Initialize arrays for sorted items and remaining items
+sorted=()
+
+# if item is in history use history position
+for item in "${history[@]}"; do
+	if [[ " ${names_array[*]} " == *" $item "* ]]; then
+		sorted+=("$item")
+	fi
+done
+
+# after history sort add any remaing
+for item in "${names_array[@]}"; do
+	if [[ " ${history[*]} " != *" $item "* ]]; then
+		sorted+=("$item")
+	fi
+done
+
+# Create an empty array to store the filtered result
+filtered_array=()
+
+# Loop through the original array and add strings that don't match the one to be filtered out
+for item in "${sorted[@]}"; do
+	if [[ "$item" != "$current_space" ]]; then
+		filtered_array+=("$item")
+	fi
+done
+
+selected_name=${filtered_array[0]}
+
+selected_id=""
+for i in "${!names_array[@]}"; do
+	if [[ "${names_array[i]}" == "$selected_name" ]]; then
+		selected_id="${ids_array[i]}"
+		break
+	fi
+done
+
+save_history history_file "$selected_name"
+echo "save history $selected_name"
+hyprctl dispatch workspace "$selected_id"
+
+refresh_ui_websocket

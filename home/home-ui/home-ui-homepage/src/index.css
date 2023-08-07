@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
+html {
+  font-family: "JetBrainsMonoNL Nerd Font";
+  font-size: 14px;
+}
+html, button {
+  cursor: crosshair;
+}

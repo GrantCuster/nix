@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Extract lines starting with "bind = " from hyprland.conf and store them in a variable
+matches=$(grep '^bind = ' ~/.config/hypr/hyprland.conf | sed 's/^bind = //')
+
+# Pass the matches as a newline-separated string to rofi -dmenu
+selected=$(echo -e "$matches" | rofi -dmenu)
+
+# Output the selected line (if any)
+if [[ -n "$selected" ]]; then
+    echo "$selected"
+    alacritty --title floating -e nvim ~/nix/home/hyprland/hyprland.conf
+fi

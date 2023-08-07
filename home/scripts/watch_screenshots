@@ -1,0 +1,8 @@
+#!/bin/bash
+
+command="echo '{ \"action\": \"screenshots_updated\" }' | websocat ws://localhost:6050"
+
+inotifywait -e create -m "/home/grant" |
+	while read -r directory event file; do
+		eval "$command"
+	done

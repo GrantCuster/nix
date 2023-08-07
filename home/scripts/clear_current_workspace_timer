@@ -1,0 +1,7 @@
+#!/bin/bash
+
+current_space=$(hyprctl activeworkspace -j | jq -r .name)
+
+filename="/tmp/timer-$current_space"
+
+rm "$filename"

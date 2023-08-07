@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo '{ "action": "workspaces_updated" }' | websocat ws://localhost:6050

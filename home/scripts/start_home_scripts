@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# npm run dev ~/dev/home-frontend
+# node ~/dev/home/hello.mjs
+watch_todos &
+watch_screenshots &
+watch_system_ideas

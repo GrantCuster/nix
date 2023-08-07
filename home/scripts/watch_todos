@@ -1,0 +1,6 @@
+#!/bin/bash
+
+file_to_watch="/home/grant/obsidian/todo/Active todo.md"
+command="echo '{ \"action\": \"active_todos_updated\" }' | websocat ws://localhost:6050"
+
+watch_file_command "$file_to_watch" "$command"

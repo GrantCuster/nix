@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function save_history {
+	local location="$1"
+	local string_to_save="$2"
+
+	# Check if the history file exists, and if not, create it
+	if [[ ! -f "$location" ]]; then
+		touch "$location"
+	fi
+
+	# Remove the string from the existing history file
+	grep -vx "$string_to_save" "$location" >"$location.tmp"
+
+	# Add the string to the start of the file
+	echo "$string_to_save" >"$location"
+
+	# Append the remaining history (without the string) to the file
+	cat "$location.tmp" >>"$location"
+
+	# Clean up temporary file
+	rm "$location.tmp"
+}
+
+save_history "$1" "$2"
+
+# Usage example:
+# save_history "/path/to/history" "string_to_save"

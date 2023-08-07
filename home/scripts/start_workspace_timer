@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+	echo "Usage: $0 <filename>"
+	exit 1
+fi
+
+filename="/tmp/timer-$1"
+
+# Get the current timestamp
+timestamp=$(date +"%Y-%m-%dT%H:%M:%S")
+
+# Create the file with the timestamp
+echo "$timestamp" >"$filename"
+
+echo "Timestamp written to the file: $filename"

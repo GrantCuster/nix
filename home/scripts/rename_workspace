@@ -1,0 +1,9 @@
+#!/bin/bash
+
+current_space_id=$(hyprctl activeworkspace -j | jq -r .id)
+
+# Prompt for name
+read -p "Rename workspace: " name
+
+hyprctl dispatch renameworkspace "$current_space_id" "$name"
+exit

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+	echo "Usage: $0 <file_to_watch> <command_to_run>"
+	exit 1
+fi
+
+FILE_TO_WATCH="$1"
+COMMAND_TO_RUN="$2"
+
+while true; do
+	inotifywait -e modify "$FILE_TO_WATCH"
+	eval "$COMMAND_TO_RUN"
+done

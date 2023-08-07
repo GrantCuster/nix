@@ -1,0 +1,6 @@
+#!/bin/bash
+
+file_to_watch="/home/grant/obsidian/todo/System ideas.md"
+command="echo '{ \"action\": \"system_ideas_updated\" }' | websocat ws://localhost:6050"
+
+watch_file_command "$file_to_watch" "$command"

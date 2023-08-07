@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+## NOT CURRENTLY USED
+
+names_string=$(hyprctl workspaces -j | jq -r '.[].name')
+ids_string=$(hyprctl workspaces -j | jq -r '.[].id')
+current_space=$(hyprctl activeworkspace -j | jq -r .name)
+
+IFS=$'\n' read -r -d '' -a names_array <<<"$names_string"
+IFS=$'\n' read -r -d '' -a ids_array <<<"$ids_string"
+
+history_file="/tmp/workspace_history"
+mapfile -t history <"$history_file"
+
+# Initialize arrays for sorted items and remaining items
+sorted=()
+
+# if item is in history use history position
+for item in "${history[@]}"; do
+	echo "$item"
+	if [[ " ${names_array[*]} " == *" $item "* ]]; then
+		sorted+=("$item")
+	fi
+done
+
+# after history sort add any remaing
+for item in "${names_array[@]}"; do
+	if [[ " ${history[*]} " != *" $item "* ]]; then
+		sorted+=("$item")
+	fi
+done
+
+# Create an empty array to store the filtered result
+filtered_array=()
+
+# Loop through the original array and add strings that don't match the one to be filtered out
+for item in "${sorted[@]}"; do
+	if [[ "$item" != "$current_space" ]]; then
+		filtered_array+=("$item")
+	fi
+done
+
+sorted_names_raw=$(printf '%s\n' "${filtered_array[@]}")
+
+# Using Rofi to display the names and get the selected name
+selected_name=$(echo "$sorted_names_raw" | rofi -dmenu -p "" -theme-str 'window { width: 360px; location: west;  height: 100%; }')
+
+if [[ -n "$selected_name" ]]; then
+	selected_id=""
+	for i in "${!names_array[@]}"; do
+		if [[ "${names_array[i]}" == "$selected_name" ]]; then
+			selected_id="${ids_array[i]}"
+			break
+		fi
+	done
+
+	save_history "/tmp/workspace_history" "$selected_name"
+
+	if [[ -n "$selected_id" ]]; then
+		# Replace 'hyprctl dispatch workspace' with your actual command to dispatch the workspace.
+		hyprctl dispatch workspace "$selected_id"
+	else
+		hyprctl dispatch workspace empty
+		id=$(hyprctl activeworkspace -j | jq -r ".id")
+		hyprctl dispatch renameworkspace "$id" $selected_name
+		start_workspace_timer "$selected_name"
+	fi
+
+	refresh_ui_websocket
+else
+	echo "No name selected."
+fi

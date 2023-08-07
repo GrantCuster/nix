@@ -1,0 +1,5 @@
+#!/bin/bash
+
+current_space=$(hyprctl activeworkspace -j | jq -r .name)
+
+start_workspace_timer "$current_space"

@@ -1,0 +1,7 @@
+names_string=$(hyprctl workspaces -j | jq -r '.[].name')
+ids_string=$(hyprctl workspaces -j | jq -r '.[].id')
+
+IFS=$'\n' read -r -d '' -a names_array <<< "$names_string"
+IFS=$'\n' read -r -d '' -a ids_array <<< "$ids_string"
+
+
