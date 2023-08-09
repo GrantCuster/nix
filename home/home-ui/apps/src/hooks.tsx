@@ -241,7 +241,7 @@ export const useSubscribeToBattery = () => {
   useEffect(() => {
     if (lastJsonMessage) {
       if (lastJsonMessage.action === "battery_status") {
-        setBattery(lastJsonMessage.response);
+        setBattery(JSON.parse(lastJsonMessage.response));
       }
     }
   }, [lastJsonMessage]);

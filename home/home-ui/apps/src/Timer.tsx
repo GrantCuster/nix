@@ -48,19 +48,19 @@ function Timer() {
   }, []);
 
   return (
-    <div className="bg-gruvbox-background text-gruvbox-foreground h-screen flex items-center overflow-hidden w-full relative select-none max-h-[32px] px-4">
+    <div className="text-gruvbox-foreground h-screen flex items-center overflow-hidden w-full relative bg-gruvbox-dark0 select-none">
       <div
         className={`absolute h-full ${
-          isActive ? "bg-gruvbox-green" : "bg-gruvbox-light2"
+          isActive ? "bg-gruvbox-light1" : "bg-gruvbox-light3"
         }`}
         style={{
           width: (time / limit) * 100 + "%",
         }}
       ></div>
-      <div className="flex w-full relative mix-blend-difference items-center font-bold justify-between">
-        <div className="flex items-center">
+      <div className="flex w-full relative mix-blend-difference h-full items-center justify-between">
+        <div className="flex h-full">
           <button
-            className="hover:bg-gruvbox-background hover:bg-opacity-50 p-1"
+            className="hover:bg-gruvbox-background hover:bg-opacity-50 px-2"
             onClick={() => {
               if (isActive) {
                 clearInterval(intervalRef.current);
@@ -71,19 +71,19 @@ function Timer() {
               }
             }}
           >
-            {isActive ? <PauseIcon size={16} /> : <PlayIcon size={16} />}
+            {isActive ? <PauseIcon size={14} /> : <PlayIcon size={14} />}
           </button>
-          <button className="hover:bg-gruvbox-background hover:bg-opacity-50 p-1">
-            <TimerResetIcon size={16} onClick={() => setTime(0)} />
+          <button className="hover:bg-gruvbox-background hover:bg-opacity-50 px-2">
+            <TimerResetIcon size={14} onClick={() => setTime(0)} />
           </button>
         </div>
         <div className="cursor-default grow text-center">
           {formatTime(Math.min(time, limit))}
         </div>
-        <div>
+        <div className="h-full">
           {editingLimit ? (
-            <div className="flex mix-blend-difference">
-              <button className="px-2 hover:bg-gruvbox-background hover:bg-opacity-50">
+            <div className="flex h-full mix-blend-difference">
+              <button className="px-2 hover:bg-gruvbox-background hidden hover:bg-opacity-50">
                 log
               </button>
               <input
@@ -115,13 +115,13 @@ function Timer() {
                   }
                 }}
               />
-              <button className="px-2 hover:bg-gruvbox-background hover:bg-opacity-50">
+              <button className="px-2 h-full hover:bg-gruvbox-background hover:bg-opacity-50">
                 <XIcon size={16} onClick={() => setEditingLimit(false)} />
               </button>
             </div>
           ) : (
             <button
-              className="px-2 cursor-pointer hover:bg-gruvbox-background hover:bg-opacity-50"
+              className="px-2 cursor-pointer h-full hover:bg-gruvbox-background hover:bg-opacity-50"
               onClick={() => {
                 setEditingLimit(true);
               }}

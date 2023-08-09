@@ -101,7 +101,7 @@ wss.on("connection", function connection(ws) {
         );
       });
     } else if (json.action === "battery_status") {
-      const contents = await exec(`battery_status_websocket`);
+      const contents = await exec(`battery_status_json`);
       wss.clients.forEach(function each(client) {
         client.send(
           JSON.stringify({

@@ -72,9 +72,11 @@
     slurp
     grim
 
+    acpi
+
     qmk
 
-    acpi
+    usbutils
 
     inotify-tools
 
