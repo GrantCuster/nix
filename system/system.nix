@@ -96,6 +96,9 @@
     pulse.enable = true;
   };
 
+  # QMK keyboard rules
+  hardware.keyboard.qmk.enable = true;
+
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 

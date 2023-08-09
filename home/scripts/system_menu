@@ -32,6 +32,7 @@ declare -A options=(
 	['screenshot full']='grim'
 	['thunar']='thunar'
 	['spotify']='spotify'
+	['reboot']='reboot'
 )
 
 # Get bookmark choices and add them to the options array
