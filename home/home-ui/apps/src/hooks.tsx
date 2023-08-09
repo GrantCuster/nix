@@ -224,3 +224,31 @@ export const useSubscribeToActiveWorkspace = () => {
 
   return { activeWorkspace, getActiveWorkspace };
 };
+
+export const useSubscribeToBattery = () => {
+  const { lastJsonMessage, sendJsonMessage } = useWebSocket(
+    socketUrl,
+    socketOptions
+  );
+  const [battery, setBattery] = useState<string>("");
+
+  function getBattery() {
+    sendJsonMessage({
+      action: "battery_status",
+    });
+  }
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      if (lastJsonMessage.action === "battery_status") {
+        setBattery(lastJsonMessage.response);
+      }
+    }
+  }, [lastJsonMessage]);
+
+  useEffect(() => {
+    getBattery();
+  }, []);
+
+  return { battery, getBattery };
+};

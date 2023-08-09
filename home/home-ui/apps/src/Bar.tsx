@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { getCurrentTime, useSubscribeToActiveWorkspace } from "./hooks";
+import {
+  getCurrentTime,
+  useSubscribeToActiveWorkspace,
+  useSubscribeToBattery,
+} from "./hooks";
 import { ArrowLeft, PlusIcon, XIcon } from "lucide-react";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import { socketUrl } from "./consts";
@@ -57,6 +61,7 @@ function Bar() {
             </Button>
           )}
         </div>
+        <Battery />
 
         <Clock />
       </div>
@@ -96,6 +101,23 @@ function Button({
       {children}
     </button>
   );
+}
+
+function Battery() {
+  const { battery, getBattery } = useSubscribeToBattery();
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     getBattery();
+  //   }, 5000);
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // });
+
+  console.log(battery);
+
+  return <div>batery</div>;
 }
 
 function Clock() {

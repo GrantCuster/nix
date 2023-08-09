@@ -102,7 +102,7 @@
     (writeShellScriptBin "watch_screenshots" (builtins.readFile ./scripts/watch_screenshots))
     (writeShellScriptBin "start_home_scripts" (builtins.readFile ./scripts/start_home_scripts))
     (writeShellScriptBin "position_home_bar" (builtins.readFile ./scripts/position_home_bar))
-    (writeShellScriptBin "battery_status_websocket" (builtins.readFile ./scripts/battery_status_websocket))
+    (writeShellScriptBin "battery_status_json" (builtins.readFile ./scripts/battery_status_json))
   ];
 
   home.sessionVariables = {

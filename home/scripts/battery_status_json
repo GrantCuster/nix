@@ -7,4 +7,4 @@ battery_info=$(acpi -V)
 battery_percentage=$(echo "$battery_info" | sed -n '1{s/.* \([0-9]\+\)%.*/\1/p}')
 charging_status=$(echo "$battery_info" | sed -n '1{s/.*: \(.*\), [0-9]\+%.*/\1/p}')
 
-echo "{ \"action\": \"battery_status\", \"payload\": { \"percent\": \"$battery_percentage\", \"status\": \"$charging_status\" } }" | websocat ws://localhost:6050
+echo "{ \"action\": \"battery_status\", \"payload\": { \"percent\": \"$battery_percentage\", \"status\": \"$charging_status\" } }"
