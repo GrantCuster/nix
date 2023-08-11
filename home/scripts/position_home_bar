@@ -5,5 +5,5 @@ screenWidth=$(xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x'
 hyprctl dispatch -- togglefloating "title:^(home_bar)\$"
 hyprctl dispatch -- pin "title:^(home_bar)\$"
 # Assume we are starting on home screen so we hide
-hyprctl dispatch -- movewindowpixel "exact 0 -40,title:^(home_bar)\$"
+hyprctl dispatch -- movewindowpixel "exact 0 0,title:^(home_bar)\$"
 hyprctl dispatch -- resizewindowpixel "exact $screenWidth 26,title:^(home_bar)\$"

@@ -33,8 +33,8 @@ declare -A options=(
 	['thunar']='thunar'
 	['spotify']='spotify'
 	['reboot']='reboot'
-	['switch to external monitor']='hyprctl keyword monitor DP-3,preferred,auto,auto; hyprctl keyword monitor "eDP-1, disable'
-	['switch to laptop monitor']='hyprctl keyword monitor eDP-1,preferred,auto,auto; hyprctl keyword monitor "DP-3, disable'
+	['switch to external monitor']="hyprctl keyword monitor DP-3,preferred,auto,auto; hyprctl keyword monitor \"eDP-1, disable\"; go_home_space"
+	['switch to laptop monitor']="hyprctl keyword monitor eDP-1,preferred,auto,auto; hyprctl keyword monitor \"DP-3, disable\"; go_home_space"
 )
 
 # Get bookmark choices and add them to the options array
@@ -84,7 +84,7 @@ choice=$(echo "$sorted_names_raw" | rofi -dmenu -i -p "")
 # Execute the chosen command
 if [[ -n "${options[$choice]}" ]]; then
 	save_history "/tmp/system_menu_history" "$choice"
-	${options[$choice]}
+	eval ${options[$choice]}
 else
 	echo "Invalid choice."
 fi

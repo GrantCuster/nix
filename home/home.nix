@@ -105,6 +105,7 @@
     (writeShellScriptBin "start_home_scripts" (builtins.readFile ./scripts/start_home_scripts))
     (writeShellScriptBin "position_home_bar" (builtins.readFile ./scripts/position_home_bar))
     (writeShellScriptBin "battery_status_json" (builtins.readFile ./scripts/battery_status_json))
+    (writeShellScriptBin "restart_home" (builtins.readFile ./scripts/restart_home))
   ];
 
   home.sessionVariables = {
