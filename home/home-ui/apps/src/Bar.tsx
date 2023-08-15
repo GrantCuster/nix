@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import {
   getCurrentTime,
+  socketOptions,
   useSubscribeToActiveWorkspace,
   useSubscribeToBattery,
 } from "./hooks";
@@ -14,23 +15,25 @@ import {
   barItemMapAtom,
   barMenuIsOpenAtom,
 } from "./atoms";
-import Timer from "./Timer";
+import Timer, { parseTimeString } from "./Timer";
+import { twMerge } from "tailwind-merge";
+import { BarItemMapType } from "./Types";
 
 function Bar() {
   useSubscribeToActiveWorkspace();
-  const { sendJsonMessage } = useWebSocket(socketUrl);
+  const { sendJsonMessage } = useWebSocket(socketUrl, socketOptions);
   const [activeWorkspace] = useAtom(activeWorkspaceAtom);
   const [menuIsOpen, setMenuIsOpen] = useAtom(barMenuIsOpenAtom);
-  const [barItemMap, setBarItemMap] = useAtom(barItemMapAtom);
+  const [barItemMap] = useAtom(barItemMapAtom);
 
   const splits = activeWorkspace.split(":");
   return (
     <div className="h-screen overflow-hidden bg-gruvbox-background text-gruvbox-foreground flex flex-col justify-center">
-      <div className="flex justify-between items-center text-gruvbox-light2">
-        <div className="flex">
-          <button
-            className="px-2 text-gruvbox-background bg-gruvbox-dark2 flex items-center"
-            onClick={() => {
+      <div className="flex justify-between items-center text-gruvbox-light2 max-h-[26px] h-full">
+        <div className="flex h-full items-center">
+          <Button
+            className="hidden"
+            action={() => {
               sendJsonMessage({
                 action: "command",
                 payload: "back_to_workspace",
@@ -38,28 +41,32 @@ function Bar() {
             }}
           >
             <ArrowLeftIcon size={14} />
-          </button>
-          <button
-            className="flex items-center"
-            onClick={() => {
+          </Button>
+          <Button
+            className="bg-transparent hover:bg-transparent"
+            action={() => {
               sendJsonMessage({ action: "command", payload: "go_home_space" });
             }}
           >
             {splits.length > 1 ? (
-              <div className="flex">
-                <div className="text-left px-2 bg-gruvbox-dark4 text-gruvbox-background">
-                  {splits[0]}
+              <div className="flex h-full">
+                <div className="text-left h-full text-gruvbox-dark4 flex items-center">
+                  <div className="">{splits[0]}:</div>
                 </div>
-                <div className="px-2 text-gruvbox-foreground">{splits[1]}</div>
+                <div className="h-full flex items-center text-gruvbox-foreground">
+                  <div>{splits[1]}</div>
+                </div>
               </div>
             ) : (
-              <div>{activeWorkspace}</div>
+              <div className="px-2 h-full flex items-center text-gruvbox-foreground">
+                {activeWorkspace}
+              </div>
             )}
-          </button>
+          </Button>
         </div>
 
         <div className="grow flex h-full">
-          {barItemMap[activeWorkspace] !== null ? <Timer /> : null}
+          {barItemMap.timers[activeWorkspace] !== undefined ? <Timer /> : null}
           {menuIsOpen ? (
             <Menu />
           ) : (
@@ -68,6 +75,7 @@ function Bar() {
             </Button>
           )}
         </div>
+
         <Battery />
         <Clock />
       </div>
@@ -79,24 +87,13 @@ const menuOptions = ["timer"];
 
 function Menu() {
   const setMenuIsOpen = useSetAtom(barMenuIsOpenAtom);
+  const [submenu, setSubmenu] = useState<"timer" | null>(null);
   const [barItemMap, setBarItemMap] = useAtom(barItemMapAtom);
   const [activeWorkspace] = useAtom(activeWorkspaceAtom);
 
   function handleAction(action: string) {
     if (action === "timer") {
-      setBarItemMap((prev) => {
-        return {
-          ...prev,
-          timers: {
-            ...prev.timers,
-            [activeWorkspace]: {
-              workspace: activeWorkspace,
-              currentSeconds: 0,
-              limitSeconds: 20 * 60,
-            },
-          },
-        };
-      });
+      setSubmenu("timer");
     }
   }
 
@@ -105,24 +102,76 @@ function Menu() {
       <Button action={() => setMenuIsOpen(false)}>
         <XIcon size={14} />
       </Button>
-      {menuOptions.map((option) => (
-        <Button action={() => handleAction(option)}>{option}</Button>
+      {submenu === null ? (
+        <>
+          {menuOptions.map((option) => (
+            <Button action={() => handleAction(option)}>{option}</Button>
+          ))}
+        </>
+      ) : submenu === "timer" ? (
+        <TimerSubmenu />
+      ) : null}
+    </div>
+  );
+}
+
+export function TimerSubmenu() {
+  const setMenuIsOpen = useSetAtom(barMenuIsOpenAtom);
+  const [barItemMap, setBarItemMap] = useAtom(barItemMapAtom);
+  const [activeWorkspace] = useAtom(activeWorkspaceAtom);
+
+  function setTimer(timeString: string) {
+    setBarItemMap((prev: BarItemMapType) => {
+      return {
+        ...prev,
+        timers: {
+          ...prev.timers,
+          [activeWorkspace]: {
+            workspace: activeWorkspace,
+            currentSeconds: 0,
+            limitSeconds:
+              timeString === "log" ? "log" : parseTimeString(timeString),
+            isActive: true,
+            colorIndex: 0,
+            showTime: true,
+          },
+        },
+      };
+    });
+    setMenuIsOpen(false);
+  }
+
+  return (
+    <div className="flex w-full h-full">
+      {["log", "5m", "10m", "15m", "20m", "25m", "30m", "1h"].map((time) => (
+        <Button
+          action={() => {
+            setTimer(time);
+          }}
+        >
+          {time}
+        </Button>
       ))}
     </div>
   );
 }
 
-function Button({
+export function Button({
   action,
   children,
+  className = "",
 }: {
   action: any;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <button
       onClick={action}
-      className="cursor-pointer h-full bg-gruvbox-dark1 hover:bg-gruvbox-dark2 px-2"
+      className={twMerge(
+        "cursor-pointer h-full px-2 bg-gruvbox-dark1 hover:bg-gruvbox-dark2",
+        className
+      )}
     >
       {children}
     </button>
@@ -144,7 +193,7 @@ function Battery() {
 
   return battery.payload ? (
     <div
-      className="relative flex px-2"
+      className="relative flex px-2 h-full"
       onClick={() => {
         setShort(!short);
       }}
@@ -178,7 +227,11 @@ function Clock() {
     setInterval(() => setBump("bump"), 1000);
   }, []);
 
-  return <div className="px-2">{getCurrentTime()}</div>;
+  return (
+    <div className="px-2 h-full flex items-center">
+      <div>{getCurrentTime()}</div>
+    </div>
+  );
 }
 
 export default Bar;

@@ -106,6 +106,7 @@
     (writeShellScriptBin "position_home_bar" (builtins.readFile ./scripts/position_home_bar))
     (writeShellScriptBin "battery_status_json" (builtins.readFile ./scripts/battery_status_json))
     (writeShellScriptBin "restart_home" (builtins.readFile ./scripts/restart_home))
+    (writeShellScriptBin "hyprcwd" (builtins.readFile ./scripts/hyprcwd))
   ];
 
   home.sessionVariables = {
@@ -202,10 +203,15 @@
     recursive = true;
   };
 
-  # Wayland config
-  # Out of store symlink probably not necessary
+  # Custom status bar and home screen
   xdg.configFile.home-ui = {
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/home-ui";
+    recursive = true;
+  };
+
+  # Extra
+  xdg.configFile.extra = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/extra";
     recursive = true;
   };
 
@@ -214,6 +220,9 @@
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
+
+  services.udiskie.enable = true;
+  services.udiskie.notify = true;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "23.05";

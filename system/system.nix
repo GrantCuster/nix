@@ -125,7 +125,7 @@
     dunst
     libnotify
     neofetch
-    steam-run
+    unzip
   ];
 
   environment.sessionVariables = {

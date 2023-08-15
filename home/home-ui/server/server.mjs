@@ -91,7 +91,7 @@ wss.on("connection", function connection(ws) {
         );
       });
     } else if (json.action === "screenshots_updated") {
-      const contents = await exec(`find ~/*.png`);
+      const contents = await exec(`find ~/screenshots/*.png`);
       wss.clients.forEach(function each(client) {
         client.send(
           JSON.stringify({

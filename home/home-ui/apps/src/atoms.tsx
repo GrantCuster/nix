@@ -5,6 +5,18 @@ export const spaceInputAtom = atom("");
 export const activeWorkspaceAtom = atom<string>("home");
 export const barMenuIsOpenAtom = atom(false);
 
-export const barItemMapAtom = atom<BarItemMapType>({
+const barItemMapBaseAtom = atom<BarItemMapType>({
   timers: {},
 });
+export const barItemMapAtom = atom(
+  (get) => get(barItemMapBaseAtom),
+  (get, set, newValue: any) => {
+    const nextValue =
+      typeof newValue === "function"
+        ? newValue(get(barItemMapBaseAtom))
+        : newValue;
+    set(barItemMapBaseAtom, nextValue);
+    localStorage.setItem("barItemMap", JSON.stringify(nextValue));
+  }
+);
+export const homeBarItemMap = atom<BarItemMapType>({ timers: {} });

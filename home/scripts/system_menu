@@ -33,8 +33,9 @@ declare -A options=(
 	['thunar']='thunar'
 	['spotify']='spotify'
 	['reboot']='reboot'
-	['switch to external monitor']="hyprctl keyword monitor DP-3,preferred,auto,auto; hyprctl keyword monitor \"eDP-1, disable\"; go_home_space"
-	['switch to laptop monitor']="hyprctl keyword monitor eDP-1,preferred,auto,auto; hyprctl keyword monitor \"DP-3, disable\"; go_home_space"
+	['switch to external monitor']="hyprctl keyword monitor DP-3,preferred,0x0,auto; hyprctl keyword monitor \"eDP-1, disable\"; go_home_space"
+	['switch to laptop monitor']="hyprctl keyword monitor eDP-1,preferred,0x0,auto; hyprctl keyword monitor \"DP-3, disable\"; go_home_space"
+	['restart home']="restart_home"
 )
 
 # Get bookmark choices and add them to the options array

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import TimeAgo from "react-timeago";
-import { spaceInputAtom, workspacesAtom } from "./atoms";
+import { barItemMapAtom, homeBarItemMap, spaceInputAtom } from "./atoms";
 import { useAtom } from "jotai";
 import {
   getCurrentDate,
@@ -14,18 +14,24 @@ import {
   useSubscribeToTodos,
 } from "./hooks";
 import Bar from "./Bar";
+import { TimerType } from "./Types";
+import { TimerBackground, TimerDisplay, timerColors } from "./Timer";
 
 function Wrapper() {
   const [mode, setMode] = useState<"bar" | "homepage">("bar");
 
   useEffect(() => {
     const pathname = window.location.pathname;
+
     if (pathname === "/bar") {
       setMode("bar");
       document.title = "home_bar";
     } else {
       setMode("homepage");
       document.title = "Homepage";
+    }
+    if (import.meta.env.DEV) {
+      document.title = "dev";
     }
   });
 
@@ -203,11 +209,25 @@ function Todo() {
 function ListSpaces() {
   const [spaceInput] = useAtom(spaceInputAtom);
   const selectWorkspace = useSelectWorkspace();
+  const [barItemMap, setBarItemMap] = useAtom(homeBarItemMap);
 
   const { workspaces, getWorkspaceTree } = useGetWorkspaceTree();
 
   useEffect(() => {
     getWorkspaceTree();
+  }, []);
+
+  useEffect(() => {
+    const syncBarState = () => {
+      console.log("sync");
+      const stored = localStorage.getItem("barItemMap") || `{ timers: {} }`;
+      const data = JSON.parse(stored);
+      setBarItemMap(data);
+    };
+    window.addEventListener("focus", syncBarState);
+    return () => {
+      window.removeEventListener("focus", syncBarState);
+    };
   }, []);
 
   let activeSpaces = workspaces.filter((space) => space !== null);
@@ -225,22 +245,31 @@ function ListSpaces() {
           return (
             <div key={space.id} className="w-full bg-gruvbox-background">
               <button
-                className="px-4 py-2 w-full flex justify-between hover:bg-gruvbox-dark1 focus:bg-gruvbox-dark1 focus:outline-none focus:border-none"
+                className="px-4 relative py-2 w-full cursor-pointer items-center gap-4 flex justify-between hover:bg-gruvbox-dark1 focus:bg-gruvbox-dark1 focus:outline-none focus:border-none"
                 onClick={() => selectWorkspace(space)}
               >
+                {barItemMap.timers[space.name] !== undefined ? (
+                  <TimerBackground timer={barItemMap.timers[space.name]} />
+                ) : null}
                 {splits.length > 1 ? (
-                  <div className="flex gap-3">
-                    <div className="text-left text-gruvbox-light4">
-                      {splits[0]}
+                  <div className="flex relative">
+                    <div className="text-left h-full text-gruvbox-light4 flex items-center">
+                      <div className="">{splits[0]}:</div>
                     </div>
+
                     <div>{splits[1]}</div>
                   </div>
                 ) : (
                   <div>{space.name}</div>
                 )}
                 {space.startTime ? (
-                  <div className="text-gruvbox-light4">
+                  <div className="text-gruvbox-light4 relative">
                     <TimeAgo date={space.startTime} />
+                  </div>
+                ) : null}
+                {barItemMap.timers[space.name] !== undefined ? (
+                  <div className="grow h-4 relative">
+                    <TimerDisplay timer={barItemMap.timers[space.name]} />
                   </div>
                 ) : null}
               </button>

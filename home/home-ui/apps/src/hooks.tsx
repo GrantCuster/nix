@@ -3,10 +3,11 @@ import { socketUrl } from "./consts";
 import { SpaceType } from "./types";
 import { useEffect, useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
-import { activeWorkspaceAtom } from "./atoms";
+import { activeWorkspaceAtom, barItemMapAtom } from "./atoms";
 
-const socketOptions = {
+export const socketOptions = {
   share: true,
+  shouldReconnect: () => true,
 };
 
 export const useSelectWorkspace = () => {
@@ -39,6 +40,7 @@ export const useSelectWorkspace = () => {
 export const useCreateWorkspace = () => {
   const { sendJsonMessage } = useWebSocket(socketUrl, socketOptions);
   const setActiveWorkspace = useSetAtom(activeWorkspaceAtom);
+  const setBarItemMap = useSetAtom(barItemMapAtom);
 
   function createWorkspace(newName: string) {
     setActiveWorkspace(newName);
@@ -213,7 +215,9 @@ export const useSubscribeToActiveWorkspace = () => {
   useEffect(() => {
     if (lastJsonMessage) {
       if (lastJsonMessage.action === "active_workspace_updated") {
-        setActiveWorkspace(lastJsonMessage.response);
+        if (lastJsonMessage.response !== "home") {
+          setActiveWorkspace(lastJsonMessage.response.replace("\n", ""));
+        }
       }
     }
   }, [lastJsonMessage]);
