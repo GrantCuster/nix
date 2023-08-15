@@ -30,8 +30,7 @@
     config = {
       # Disable if you don't want unfree packages
       allowUnfree = true;
-      # Workaround for https://github.com/nix-community/home-manager/issues/2942
-      allowUnfreePredicate = (_: true);
+      # Workaround for https://github.com/nix-community/home-manager/issues/2942 allowUnfreePredicate = (_: true);
     };
   };
 
@@ -80,6 +79,8 @@
 
     inotify-tools
 
+    imagemagick
+
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
     (writeShellScriptBin "system_menu" (builtins.readFile ./scripts/system_menu))
@@ -107,6 +108,7 @@
     (writeShellScriptBin "battery_status_json" (builtins.readFile ./scripts/battery_status_json))
     (writeShellScriptBin "restart_home" (builtins.readFile ./scripts/restart_home))
     (writeShellScriptBin "hyprcwd" (builtins.readFile ./scripts/hyprcwd))
+    (writeShellScriptBin "hyprshot" (builtins.readFile ./scripts/hyprshot))
   ];
 
   home.sessionVariables = {

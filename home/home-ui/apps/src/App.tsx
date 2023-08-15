@@ -97,7 +97,7 @@ function App() {
               >
                 <input
                   ref={spaceInputRef}
-                  className="w-full text-gruvbox-foreground text-lg px-4 placeholder:text-gruvbox-dark4 bg-gruvbox-dark0 py-3 font-bold focus:outline-none "
+                  className="w-full text-gruvbox-foreground text-lg px-4 placeholder:text-gruvbox-dark4 bg-gruvbox-dark0 py-3 focus:outline-none "
                   placeholder="What are you working on?"
                   spellCheck="false"
                   type="text"
