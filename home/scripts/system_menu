@@ -38,8 +38,8 @@ declare -A options=(
 	['switch to external monitor']="hyprctl keyword monitor DP-3,preferred,0x0,auto; hyprctl keyword monitor \"eDP-1, disable\"; go_home_space"
 	['switch to laptop monitor']="hyprctl keyword monitor eDP-1,preferred,0x0,auto; hyprctl keyword monitor \"DP-3, disable\"; go_home_space"
 	['restart home']="restart_home"
-	['resize 80% height']="resize_window_percent 0.8"
-	['resize 80% height']="resize_window_percent 0.5"
+	['resize 80% height']="sleep 0.1 && resize_window_percent 0.8"
+	['resize 50% height']="sleep 0.1 && resize_window_percent 0.5"
 )
 
 # Get bookmark choices and add them to the options array

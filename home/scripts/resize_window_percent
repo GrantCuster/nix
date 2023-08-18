@@ -16,12 +16,16 @@ available_height=$((height - y_value - reserved_y))
 percentage=$1
 
 # Calculate new height based on the percentage
-new_height=$((available_height * percentage / 1))
+new_height=$(echo "scale=0; ($available_height * $percentage) / 1" | bc)
 
 echo "Available Height: $available_height"
 echo "New Height: $new_height"
 
-width=$(echo "$json_data" | jq -r '.size[0]')
+window_height=$(hyprctl activewindow -j | jq -r '.size[1]')
+
+adjust_height=$((window_height - new_height))
+
+echo "Adjust: $adjust_height"
 
 # Dispatch hyprctl command with the new height
-hyprctl dispatch resizeactive exact "$width" "$new_height"
+hyprctl dispatch resizeactive 0 "$adjust_height"

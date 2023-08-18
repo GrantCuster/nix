@@ -122,7 +122,6 @@
   environment.systemPackages = with pkgs; [
     killall
     brightnessctl
-    dunst
     libnotify
     neofetch
     unzip

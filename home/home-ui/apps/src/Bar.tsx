@@ -147,6 +147,7 @@ function NewTimer({
   const setBarItemMap = useSetAtom(barItemMapAtom);
   const timerRef = useRef<number>(-1);
   const workspaceRef = useRef<string>(workspace);
+  const { sendJsonMessage } = useWebSocket(socketUrl, socketOptions);
 
   const setTimerProp = (keyString: string, value: any) => {
     setBarItemMap((prev: BarItemMapType) => {
@@ -170,12 +171,32 @@ function NewTimer({
       timerRef.current = setInterval(() => {
         setBarItemMap((prev: BarItemMapType) => {
           let newTimers = prev[workspace].timers.slice();
-          newTimers[timerIndex].currentSeconds++;
+          const newVal = newTimers[timerIndex].currentSeconds++;
+          if (newVal === 5 * 60) {
+            sendJsonMessage({
+              action: "command",
+              payload: 'notify-send -t 2000 "5 minutes"',
+            });
+          } else if (newVal === 10 * 60) {
+            sendJsonMessage({
+              action: "command",
+              payload: 'notify-send -t 2000 "10 minutes"',
+            });
+          } else if (newVal === 20 * 60) {
+            sendJsonMessage({
+              action: "command",
+              payload: 'notify-send -t 2000 "20 minutes"',
+            });
+          } else if (newVal === 30 * 60) {
+            sendJsonMessage({
+              action: "command",
+              payload: 'notify-send -t 2000 "30 minutes"',
+            });
+          }
           return {
             ...prev,
             [workspace]: {
               ...prev[workspace],
-
               timers: newTimers,
             },
           };

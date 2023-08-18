@@ -154,6 +154,8 @@ function RecentScreenshots() {
 function SystemIdeas() {
   const { systemIdeas } = useSubscribeToSystemIdeas();
   const createWorkspace = useCreateWorkspace();
+  const selectWorkspace = useSelectWorkspace();
+  const { workspaces } = useGetWorkspaceTree();
 
   const lines = systemIdeas.split("\n");
 
@@ -173,7 +175,13 @@ function SystemIdeas() {
                   hasX ? "hidden" : ""
                 }`}
                 action={() => {
-                  createWorkspace("task:" + splits[1]);
+                  const taskName = "task:" + splits[1];
+                  const workspaceNames = workspaces.map((w) => w.name);
+                  if (workspaceNames.includes(taskName)) {
+                    const index = workspaceNames.indexOf(taskName);
+                    selectWorkspace(workspaces[index]);
+                  }
+                  createWorkspace(taskName);
                 }}
               >
                 <div>{splits[1]}</div>
@@ -188,6 +196,8 @@ function SystemIdeas() {
 function Todo() {
   const { todos } = useSubscribeToTodos();
   const createWorkspace = useCreateWorkspace();
+  const selectWorkspace = useSelectWorkspace();
+  const { workspaces } = useGetWorkspaceTree();
 
   const lines = todos.split("\n");
 
@@ -207,7 +217,13 @@ function Todo() {
                   hasX ? "hidden" : ""
                 }`}
                 action={() => {
-                  createWorkspace("task:" + splits[1]);
+                  const taskName = "task:" + splits[1];
+                  const workspaceNames = workspaces.map((w) => w.name);
+                  if (workspaceNames.includes(taskName)) {
+                    const index = workspaceNames.indexOf(taskName);
+                    selectWorkspace(workspaces[index]);
+                  }
+                  createWorkspace(taskName);
                 }}
               >
                 <div>{splits[1]}</div>

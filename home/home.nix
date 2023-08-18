@@ -84,6 +84,8 @@
 
     imagemagick
 
+    bc
+
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
     (writeShellScriptBin "system_menu" (builtins.readFile ./scripts/system_menu))
@@ -221,12 +223,23 @@
     recursive = true;
   };
 
+  xdg.configFile.dunst = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/dunst";
+    recursive = true;
+  };
+
+
+
   # Enable home-manager and git
   programs.home-manager.enable = true;
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 
+  services.dunst.enable = true;
+  services.dunst.configFile = "${config.home.homeDirectory}/nix/home/dunst/dunstrc";
+
+  # Udiskie is probably not actually working
   services.udiskie.enable = true;
   services.udiskie.notify = true;
 
