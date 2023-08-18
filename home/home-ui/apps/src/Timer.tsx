@@ -11,7 +11,7 @@ import { useAtom } from "jotai";
 import { activeWorkspaceAtom, barItemMapAtom } from "./atoms";
 import { TimerType } from "./Types";
 
-const formatTime = (seconds: number) => {
+export const formatTime = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const adjustedMinutes = minutes % 60;
@@ -29,7 +29,7 @@ const formatTime = (seconds: number) => {
   return format;
 };
 
-const formatTimeColon = (seconds: number) => {
+export const formatTimeColon = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const adjustedMinutes = minutes % 60;
@@ -41,7 +41,11 @@ const formatTimeColon = (seconds: number) => {
   if (adjustedMinutes > 0) {
     format += adjustedMinutes + ":";
   } else {
-    format += "0:";
+    if (hours > 0) {
+      format += "00:";
+    } else {
+      format += "0:";
+    }
   }
   format += adjustedSeconds.toString().padStart(2, "0");
   return format;
@@ -84,7 +88,6 @@ function Timer() {
   const currentTimer = barItemMap.timers[activeWorkspace];
   const isActive = currentTimer.isActive;
   const time = currentTimer.currentSeconds;
-  const limitMode = currentTimer.limitSeconds === "log" ? "log" : "normal";
   let limit = currentTimer.limitSeconds;
 
   const setTimerProp = (propKey: string, propValue: any) => {

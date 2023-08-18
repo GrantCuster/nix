@@ -110,6 +110,18 @@ wss.on("connection", function connection(ws) {
           })
         );
       });
+    } else if (json.action === "volume_status") {
+      const contents = await exec(
+        `amixer sget 'Master',0 | grep 'Front Left:' | awk -F'[][]' '{print $2}'`
+      );
+      wss.clients.forEach(function each(client) {
+        client.send(
+          JSON.stringify({
+            action: "volume_status",
+            response: contents.stdout.replace("\n", "").trim(),
+          })
+        );
+      });
     }
   });
 });

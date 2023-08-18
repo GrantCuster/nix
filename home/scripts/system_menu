@@ -29,13 +29,17 @@ declare -A options=(
 	['restart workspace timer']='restart_current_workspace_timer'
 	['turn off workspace timer']='clear_current_workspace_timer'
 	['rename workspace']='alacritty --title floating -e rename_workspace'
-	['screenshot full']='grim'
+	['screenshot monitor']='hyprshot -m output -o /home/grant/screenshots/'
+	['screenshot window']='hyprshot -m window -o /home/grant/screenshots/'
+	['screenshot region']='hyprshot -m region -o /home/grant/screenshots/'
 	['thunar']='thunar'
 	['spotify']='spotify'
 	['reboot']='reboot'
 	['switch to external monitor']="hyprctl keyword monitor DP-3,preferred,0x0,auto; hyprctl keyword monitor \"eDP-1, disable\"; go_home_space"
 	['switch to laptop monitor']="hyprctl keyword monitor eDP-1,preferred,0x0,auto; hyprctl keyword monitor \"DP-3, disable\"; go_home_space"
 	['restart home']="restart_home"
+	['resize 80% height']="resize_window_percent 0.8"
+	['resize 80% height']="resize_window_percent 0.5"
 )
 
 # Get bookmark choices and add them to the options array

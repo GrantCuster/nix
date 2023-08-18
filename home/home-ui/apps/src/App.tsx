@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import "./App.css";
 import TimeAgo from "react-timeago";
 import { barItemMapAtom, homeBarItemMap, spaceInputAtom } from "./atoms";
@@ -13,9 +13,15 @@ import {
   useSubscribeToSystemIdeas,
   useSubscribeToTodos,
 } from "./hooks";
-import Bar from "./Bar";
+import Bar, { Button, getLogLimit } from "./Bar";
 import { TimerType } from "./Types";
-import { TimerBackground, TimerDisplay, timerColors } from "./Timer";
+import {
+  TimerBackground,
+  TimerDisplay,
+  formatTime,
+  formatTimeColon,
+  timerColors,
+} from "./Timer";
 
 function Wrapper() {
   const [mode, setMode] = useState<"bar" | "homepage">("bar");
@@ -76,7 +82,7 @@ function App() {
 
   return (
     <div className="h-screen overflow-hidden bg-gruvbox-background text-gruvbox-foreground flex flex-col">
-      <div className="flex justify-between px-4 pb-2 pt-2 text-gruvbox-light2">
+      <div className="flex hidden justify-between px-4 pb-2 pt-2 text-gruvbox-light2">
         <div>{getCurrentDate()}</div>
         <div>{getCurrentTime()}</div>
       </div>
@@ -107,9 +113,6 @@ function App() {
               </form>
             </div>
             <ListSpaces />
-          </div>
-          <div className="h-[240px]">
-            <RecentScreenshots />
           </div>
         </div>
         <div className="w-1/4 text-gruvbox-light3 overflow-hidden h-full border-l border-gruvbox-dark3 flex flex-col">
@@ -150,6 +153,7 @@ function RecentScreenshots() {
 
 function SystemIdeas() {
   const { systemIdeas } = useSubscribeToSystemIdeas();
+  const createWorkspace = useCreateWorkspace();
 
   const lines = systemIdeas.split("\n");
 
@@ -163,13 +167,17 @@ function SystemIdeas() {
             const splits = line.split("]");
             const hasX = splits[0].includes("x");
             return (
-              <div
-                className={`flex gap-3 bg-gruvbox-background px-4 py-2 items-center ${
+              <Button
+                key={i}
+                className={`flex px-4 py-2 bg-gruvbox-background hover:bg-gruvbox-dark1 text-left ${
                   hasX ? "hidden" : ""
                 }`}
+                action={() => {
+                  createWorkspace("task:" + splits[1]);
+                }}
               >
                 <div>{splits[1]}</div>
-              </div>
+              </Button>
             );
           })}
       </div>
@@ -179,6 +187,7 @@ function SystemIdeas() {
 
 function Todo() {
   const { todos } = useSubscribeToTodos();
+  const createWorkspace = useCreateWorkspace();
 
   const lines = todos.split("\n");
 
@@ -192,13 +201,17 @@ function Todo() {
             const splits = line.split("]");
             const hasX = splits[0].includes("x");
             return (
-              <div
-                className={`flex gap-3 bg-gruvbox-background px-4 py-2 items-center ${
+              <Button
+                key={i}
+                className={`flex px-4 py-2 bg-gruvbox-background hover:bg-gruvbox-dark1 text-left ${
                   hasX ? "hidden" : ""
                 }`}
+                action={() => {
+                  createWorkspace("task:" + splits[1]);
+                }}
               >
                 <div>{splits[1]}</div>
-              </div>
+              </Button>
             );
           })}
       </div>
@@ -213,16 +226,18 @@ function ListSpaces() {
 
   const { workspaces, getWorkspaceTree } = useGetWorkspaceTree();
 
+  const [cacheBump, setCacheBump] = useState(Date.now());
+
   useEffect(() => {
     getWorkspaceTree();
   }, []);
 
   useEffect(() => {
     const syncBarState = () => {
-      console.log("sync");
-      const stored = localStorage.getItem("barItemMap") || `{ timers: {} }`;
+      const stored = localStorage.getItem("barItemMap") || `{ }`;
       const data = JSON.parse(stored);
       setBarItemMap(data);
+      setCacheBump(Date.now());
     };
     window.addEventListener("focus", syncBarState);
     return () => {
@@ -239,44 +254,82 @@ function ListSpaces() {
 
   return (
     <div className="flex flex-col grow overflow-auto ">
-      <div className="gap-px py-px bg-gruvbox-dark2 flex flex-col">
+      <div className="flex flex-col">
         {activeSpaces.map((space) => {
           const splits = space.name.split(":");
           return (
-            <div key={space.id} className="w-full bg-gruvbox-background">
+            <div key={space.id} className="w-full border border-gruvbox-dark3">
               <button
-                className="px-4 relative py-2 w-full cursor-pointer items-center gap-4 flex justify-between hover:bg-gruvbox-dark1 focus:bg-gruvbox-dark1 focus:outline-none focus:border-none"
+                className="w-full gap-4 cursor-pointer items-center flex hover:bg-gruvbox-dark1 focus:bg-gruvbox-dark1 focus:outline-none focus:border-none"
                 onClick={() => selectWorkspace(space)}
               >
-                {barItemMap.timers[space.name] !== undefined ? (
-                  <TimerBackground timer={barItemMap.timers[space.name]} />
-                ) : null}
-                {splits.length > 1 ? (
-                  <div className="flex relative">
-                    <div className="text-left h-full text-gruvbox-light4 flex items-center">
-                      <div className="">{splits[0]}:</div>
-                    </div>
+                <div className="pl-4 w-2/3 overflow-hidden overflow-ellipsis h-6">
+                  {splits.length > 1 ? (
+                    <div className="flex relative">
+                      <div className="text-left h-full text-gruvbox-light4 flex items-center">
+                        <div className="">{splits[0]}:</div>
+                      </div>
 
-                    <div>{splits[1]}</div>
-                  </div>
-                ) : (
-                  <div>{space.name}</div>
-                )}
-                {space.startTime ? (
-                  <div className="text-gruvbox-light4 relative">
-                    <TimeAgo date={space.startTime} />
-                  </div>
-                ) : null}
-                {barItemMap.timers[space.name] !== undefined ? (
-                  <div className="grow h-4 relative">
-                    <TimerDisplay timer={barItemMap.timers[space.name]} />
-                  </div>
-                ) : null}
+                      <div>{splits[1]}</div>
+                    </div>
+                  ) : (
+                    <div>{space.name}</div>
+                  )}
+                </div>
+                <div className="grow">
+                  {barItemMap[space.name] !== undefined ? (
+                    <AppSpaceTimers timers={barItemMap[space.name].timers} />
+                  ) : null}
+                </div>
+                <div
+                  className="h-12 w-24"
+                  style={{
+                    backgroundSize: "contain",
+                    backgroundPosition: "right center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundImage: `url(http://localhost:6049/home/grant/screenshots/workspaces/${encodeURI(
+                      space.name
+                    )}.png?cacheBump=${cacheBump})`,
+                  }}
+                ></div>
               </button>
             </div>
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function AppSpaceTimers({ timers }: { timers: TimerType[] }) {
+  return (
+    <div className="flex grow">
+      {timers.map((timer) => (
+        <AppSpaceTimer timer={timer} />
+      ))}
+    </div>
+  );
+}
+
+function AppSpaceTimer({ timer }: { timer: TimerType }) {
+  const activeLimit =
+    timer.limitSeconds === "log"
+      ? getLogLimit(timer.currentSeconds)
+      : timer.limitSeconds;
+
+  return (
+    <div className="flex grow text-gruvbox-light4 gap-3">
+      <div className="grow text-center relative">
+        <div
+          className={`absolute left-0 top-0 bottom-0 ${
+            timer.isActive ? "bg-gruvbox-dark2" : "bg-gruvbox-dark1"
+          }`}
+          style={{
+            width: (timer.currentSeconds / activeLimit) * 100 + "%",
+          }}
+        ></div>
+      </div>
+      <div className="relative">{formatTime(activeLimit)}</div>
     </div>
   );
 }

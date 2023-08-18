@@ -30,7 +30,8 @@
     config = {
       # Disable if you don't want unfree packages
       allowUnfree = true;
-      # Workaround for https://github.com/nix-community/home-manager/issues/2942 allowUnfreePredicate = (_: true);
+      # Workaround for https://github.com/nix-community/home-manager/issues/2942 
+      allowUnfreePredicate = (_: true);
     };
   };
 
@@ -61,6 +62,8 @@
     nodejs_20
 
     swww
+
+    ripdrag
 
     spotify
     
@@ -109,6 +112,7 @@
     (writeShellScriptBin "restart_home" (builtins.readFile ./scripts/restart_home))
     (writeShellScriptBin "hyprcwd" (builtins.readFile ./scripts/hyprcwd))
     (writeShellScriptBin "hyprshot" (builtins.readFile ./scripts/hyprshot))
+    (writeShellScriptBin "resize_window_percent" (builtins.readFile ./scripts/resize_window_percent))
   ];
 
   home.sessionVariables = {

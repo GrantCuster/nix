@@ -1,6 +1,9 @@
 #!/bin/bash
 
+current_space=$(hyprctl activeworkspace -j | jq -r .name)
+
 # assume home is 1
+grim "/home/grant/screenshots/workspaces/${current_space}.png"
 hyprctl dispatch workspace 1
-hyprctl dispatch movewindowpixel "exact 0 -40,title:^(home_bar)$"
+# hyprctl dispatch movewindowpixel "exact 0 -40,title:^(home_bar)$"
 refresh_ui_websocket

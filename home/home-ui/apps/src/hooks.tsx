@@ -18,7 +18,7 @@ export const useSelectWorkspace = () => {
     setActiveWorkspace(space.name);
 
     let payload = "";
-    payload += `hyprctl dispatch movewindowpixel "exact 0 0,title:^(home_bar)$"; `;
+    // payload += `hyprctl dispatch movewindowpixel "exact 0 0,title:^(home_bar)$"; `;
     payload += `hyprctl dispatch workspace ${space.id}; `;
     payload += `save_history "/tmp/workspace_history" "${space.name}"; `;
     payload += `refresh_ui_websocket;`;
@@ -40,7 +40,6 @@ export const useSelectWorkspace = () => {
 export const useCreateWorkspace = () => {
   const { sendJsonMessage } = useWebSocket(socketUrl, socketOptions);
   const setActiveWorkspace = useSetAtom(activeWorkspaceAtom);
-  const setBarItemMap = useSetAtom(barItemMapAtom);
 
   function createWorkspace(newName: string) {
     setActiveWorkspace(newName);
@@ -51,7 +50,6 @@ export const useCreateWorkspace = () => {
     payload += `hyprctl dispatch renameworkspace "$id" "${newName}"; `;
     payload += `save_history "/tmp/workspace_history" "${newName}"; `;
     payload += `hyprctl dispatch movewindowpixel "exact 0 0,title:^(home_bar)$"; `;
-    payload += `start_workspace_timer "${newName}"`;
 
     sendJsonMessage({
       action: "command",
@@ -255,4 +253,32 @@ export const useSubscribeToBattery = () => {
   }, []);
 
   return { battery, getBattery };
+};
+
+export const useSubscribeToVolume = () => {
+  const { lastJsonMessage, sendJsonMessage } = useWebSocket(
+    socketUrl,
+    socketOptions
+  );
+  const [volume, setVolume] = useState<string>("");
+
+  function getVolume() {
+    sendJsonMessage({
+      action: "volume_status",
+    });
+  }
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      if (lastJsonMessage.action === "volume_status") {
+        setVolume(lastJsonMessage.response);
+      }
+    }
+  }, [lastJsonMessage]);
+
+  useEffect(() => {
+    getVolume();
+  }, []);
+
+  return { volume, getVolume, setVolume };
 };
