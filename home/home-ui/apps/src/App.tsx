@@ -15,16 +15,11 @@ import {
 } from "./hooks";
 import Bar, { Button, getLogLimit } from "./Bar";
 import { TimerType } from "./Types";
-import {
-  TimerBackground,
-  TimerDisplay,
-  formatTime,
-  formatTimeColon,
-  timerColors,
-} from "./Timer";
+import { formatTime } from "./Timer";
+import Canvas from "./Canvas";
 
 function Wrapper() {
-  const [mode, setMode] = useState<"bar" | "homepage">("bar");
+  const [mode, setMode] = useState<"bar" | "homepage" | "canvas">("bar");
 
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -32,16 +27,20 @@ function Wrapper() {
     if (pathname === "/bar") {
       setMode("bar");
       document.title = "home_bar";
+    } else if (pathname === "/canvas") {
+      setMode("canvas");
+      document.title = "canvas";
     } else {
       setMode("homepage");
       document.title = "Homepage";
     }
+
     if (import.meta.env.DEV) {
       document.title = "dev";
     }
   });
 
-  return mode === "bar" ? <Bar /> : <App />;
+  return mode === "bar" ? <Bar /> : mode === "canvas" ? <Canvas /> : <App />;
 }
 
 function App() {

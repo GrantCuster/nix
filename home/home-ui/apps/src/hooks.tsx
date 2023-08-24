@@ -3,7 +3,11 @@ import { socketUrl } from "./consts";
 import { SpaceType } from "./types";
 import { useEffect, useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
-import { activeWorkspaceAtom, barItemMapAtom } from "./atoms";
+import {
+  activeWorkspaceAtom,
+  barItemMapAtom,
+  workSpaceIdCounterAtom,
+} from "./atoms";
 
 export const socketOptions = {
   share: true,
@@ -18,10 +22,8 @@ export const useSelectWorkspace = () => {
     setActiveWorkspace(space.name);
 
     let payload = "";
-    // payload += `hyprctl dispatch movewindowpixel "exact 0 0,title:^(home_bar)$"; `;
     payload += `hyprctl dispatch workspace ${space.id}; `;
     payload += `save_history "/tmp/workspace_history" "${space.name}"; `;
-    payload += `refresh_ui_websocket;`;
 
     const content = {
       action: "command",
@@ -40,6 +42,9 @@ export const useSelectWorkspace = () => {
 export const useCreateWorkspace = () => {
   const { sendJsonMessage } = useWebSocket(socketUrl, socketOptions);
   const setActiveWorkspace = useSetAtom(activeWorkspaceAtom);
+  const [workspaceIdCounter, setWorkspaceIdCounter] = useAtom(
+    workSpaceIdCounterAtom
+  );
 
   function createWorkspace(newName: string) {
     setActiveWorkspace(newName);
@@ -49,7 +54,6 @@ export const useCreateWorkspace = () => {
     payload += `id=$(hyprctl activeworkspace -j | jq -r ".id"); `;
     payload += `hyprctl dispatch renameworkspace "$id" "${newName}"; `;
     payload += `save_history "/tmp/workspace_history" "${newName}"; `;
-    payload += `hyprctl dispatch movewindowpixel "exact 0 0,title:^(home_bar)$"; `;
 
     sendJsonMessage({
       action: "command",
@@ -66,6 +70,46 @@ export const useCreateWorkspace = () => {
   }
 
   return createWorkspace;
+};
+
+export const useCreateOrSelectWorkspace = () => {
+  const { sendJsonMessage } = useWebSocket(socketUrl, socketOptions);
+  const { workspaces } = useGetWorkspaceTree();
+
+  function createOrSelectWorkspace(name: string) {
+    const workspaceNames = workspaces.map((w) => w.name);
+    let payload = "";
+    if (workspaceNames.includes(name)) {
+      console.log("selec");
+      const index = workspaceNames.indexOf(name);
+      const space = workspaces[index];
+      console.log(space);
+      payload += `hyprctl dispatch workspace ${space.id}; `;
+      payload += `save_history "/tmp/workspace_history" "${name}"; `;
+    } else {
+      payload += `hyprctl dispatch workspace empty; `;
+      payload += `id=$(hyprctl activeworkspace -j | jq -r ".id"); `;
+      payload += `hyprctl dispatch renameworkspace "$id" "${name}"; `;
+      payload += `save_history "/tmp/workspace_history" "${name}"; `;
+    }
+
+    console.log(payload);
+
+    sendJsonMessage({
+      action: "command",
+      payload,
+    });
+
+    setTimeout(
+      () =>
+        sendJsonMessage({
+          action: "workspaces_updated",
+        }),
+      200
+    );
+  }
+
+  return createOrSelectWorkspace;
 };
 
 export const useGetWorkspaceTree = () => {

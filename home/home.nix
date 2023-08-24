@@ -217,19 +217,6 @@
     recursive = true;
   };
 
-  # Extra
-  xdg.configFile.extra = {
-    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/extra";
-    recursive = true;
-  };
-
-  xdg.configFile.dunst = {
-    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/dunst";
-    recursive = true;
-  };
-
-
-
   # Enable home-manager and git
   programs.home-manager.enable = true;
 
@@ -237,7 +224,23 @@
   systemd.user.startServices = "sd-switch";
 
   services.dunst.enable = true;
-  services.dunst.configFile = "${config.home.homeDirectory}/nix/home/dunst/dunstrc";
+  services.dunst.settings =  {
+    global = {
+      width = 300;
+      padding = 12;
+      horizontal_padding = 12;
+      offset = "0x-0";
+      frame_color = "#ebdbb2";
+      frame_width = 0;
+      font = "JetBrainsMonoNL Nerd Font Mono 10";
+    };
+
+    urgency_normal = {
+      background = "#ebdbb2";
+      foreground = "#282828";
+      timeout = 10;
+    };
+  };
 
   # Udiskie is probably not actually working
   services.udiskie.enable = true;
