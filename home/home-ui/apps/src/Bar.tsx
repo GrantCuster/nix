@@ -264,7 +264,7 @@ function NewTimer({
       </div>
       <div className="px-2 text-gruvbox-light3 ">
         {timer.limitSeconds === "log"
-          ? `log:${formatTime(activeLimit)}`
+          ? formatTime(activeLimit)
           : formatTime(timer.limitSeconds)}
       </div>
     </div>
@@ -419,7 +419,7 @@ export function Button({
 }) {
   return (
     <button
-      onClick={action}
+      onPointerDown={action}
       className={twMerge(
         "cursor-pointer h-full px-2 bg-gruvbox-dark1 hover:bg-gruvbox-dark2",
         className
@@ -502,15 +502,18 @@ function Volume() {
 }
 
 function Clock() {
-  const [, setBump] = useState("bump");
+  const [time, setTime] = useState(getCurrentTime());
 
   useEffect(() => {
-    setInterval(() => setBump("bump"), 1000);
+    const intervalId = setInterval(() => setTime(getCurrentTime()), 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   return (
     <div className="px-2">
-      <div>{getCurrentTime()}</div>
+      <div>{time}</div>
     </div>
   );
 }

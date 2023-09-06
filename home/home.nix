@@ -85,6 +85,7 @@
     imagemagick
 
     bc
+    autojump
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
@@ -115,6 +116,7 @@
     (writeShellScriptBin "hyprcwd" (builtins.readFile ./scripts/hyprcwd))
     (writeShellScriptBin "hyprshot" (builtins.readFile ./scripts/hyprshot))
     (writeShellScriptBin "resize_window_percent" (builtins.readFile ./scripts/resize_window_percent))
+    (writeShellScriptBin "browserapp" (builtins.readFile ./scripts/browserapp))
   ];
 
   home.sessionVariables = {
@@ -161,9 +163,15 @@
     enable = true;
     enableCompletion = true;
     enableAutosuggestions = true;
-    # oh my zsh gets us substring search
+    shellAliases = {
+      b = browserapp
+      };
+   # oh my zsh gets us substring search
     # the option for enabling it separately was not working for me
     oh-my-zsh.enable = true;
+    oh-my-zsh.plugins = [
+      "autojump"
+    ];
   };
 
   programs.waybar = {

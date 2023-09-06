@@ -80,10 +80,8 @@ export const useCreateOrSelectWorkspace = () => {
     const workspaceNames = workspaces.map((w) => w.name);
     let payload = "";
     if (workspaceNames.includes(name)) {
-      console.log("selec");
       const index = workspaceNames.indexOf(name);
       const space = workspaces[index];
-      console.log(space);
       payload += `hyprctl dispatch workspace ${space.id}; `;
       payload += `save_history "/tmp/workspace_history" "${name}"; `;
     } else {
@@ -92,8 +90,6 @@ export const useCreateOrSelectWorkspace = () => {
       payload += `hyprctl dispatch renameworkspace "$id" "${name}"; `;
       payload += `save_history "/tmp/workspace_history" "${name}"; `;
     }
-
-    console.log(payload);
 
     sendJsonMessage({
       action: "command",

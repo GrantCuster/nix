@@ -18,26 +18,29 @@ app.use(
 app.use("/home/grant", express.static("/home/grant"));
 
 async function getWorkspaceTree() {
-  const workspaceExec = await exec(
-    `hyprctl workspaces -j | jq 'map({name: .name, id: .id, windows: .windows})'`
-  );
-  const tree = JSON.parse(workspaceExec.stdout);
-  for (const space of tree) {
-    space.startTime = null;
-  }
-  const sortedWorkspacesExec = await exec(`json_recent_workspaces`);
-  const sortedWorkspaces = JSON.parse(sortedWorkspacesExec.stdout);
-  const namesLookup = tree.map((space) => space.name);
-  let sortedTree = [];
-  let nameCheck = [];
-  for (const name of sortedWorkspaces) {
-    if (name !== "home" && !nameCheck.includes(name)) {
-      const index = namesLookup.indexOf(name);
-      sortedTree.push(tree[index]);
-      nameCheck.push(name);
+  try {
+    const workspaceExec = await exec(`hyprctl workspaces -j`);
+    const tree = JSON.parse(workspaceExec.stdout);
+    console.log("get tree");
+    for (const space of tree) {
+      space.startTime = null;
     }
+    const sortedWorkspacesExec = await exec(`json_recent_workspaces`);
+    const sortedWorkspaces = JSON.parse(sortedWorkspacesExec.stdout);
+    const namesLookup = tree.map((space) => space.name);
+    let sortedTree = [];
+    let nameCheck = [];
+    for (const name of sortedWorkspaces) {
+      if (name !== "home" && !nameCheck.includes(name)) {
+        const index = namesLookup.indexOf(name);
+        sortedTree.push(tree[index]);
+        nameCheck.push(name);
+      }
+    }
+    return sortedTree;
+  } catch (e) {
+    console.log(e);
   }
-  return sortedTree;
 }
 
 const wss = new WebSocketServer({ port: 6050 });
@@ -52,9 +55,11 @@ wss.on("connection", function connection(ws) {
         ws.send(JSON.stringify({ action: json.payload, response: stdout }));
       });
     } else if (json.action === "get_workspace_tree") {
+      console.log("get tree bare");
       const tree = await getWorkspaceTree();
       ws.send(JSON.stringify({ action: "get_workspace_tree", response: tree }));
     } else if (json.action === "workspaces_updated") {
+      console.log("get tree update");
       const tree = await getWorkspaceTree();
       const active_workspace = await exec(
         `hyprctl -j activeworkspace | jq -r .name`

@@ -19,6 +19,7 @@ export type WorkspaceBlockType = {
   name: string;
   origin: Point;
   size: Size;
+  zIndex: number;
 };
 
 export type BlockType = WorkspaceBlockType;

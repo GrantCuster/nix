@@ -6,6 +6,7 @@ import {
   BlockMapType,
   Camera,
   Point,
+  Size,
 } from "./Types";
 import { BlockMenuType, CreateWorkspaceMenuType } from "./Canvas";
 
@@ -34,6 +35,54 @@ export const createWorkspaceMenuAtom = atom<CreateWorkspaceMenuType | null>(
 
 export const workSpaceIdCounterAtom = atom(10);
 export const cameraAtom = atom<Camera>({ x: 0, y: 0, z: 1 });
-export const cursorAtom = atom<Point>({ x: 0, y: 0 });
-export const blockIdsAtom = atomWithStorage<BlockIdsType>("block-ids", []);
-export const blockMapAtom = atomWithStorage<BlockMapType>("block-map", {});
+export const cursorBaseAtom = atom<Point>({ x: 0, y: 0 });
+export const cursorRefAtom = atom<{ current: Point }>({
+  current: { x: 0, y: 0 },
+});
+export const cursorAtom = atom(
+  (get) => get(cursorBaseAtom),
+  (get, set, newValue: any) => {
+    const nextValue =
+      typeof newValue === "function" ? newValue(get(cursorBaseAtom)) : newValue;
+    set(cursorRefAtom, { current: nextValue });
+    set(cursorBaseAtom, nextValue);
+  }
+);
+
+const blockIdsBaseAtom = atomWithStorage<BlockIdsType>("block-ids", []);
+export const blockIdsRefAtom = atom<{ current: BlockIdsType }>({ current: [] });
+export const blockIdsAtom = atom(
+  (get) => get(blockIdsBaseAtom),
+  (get, set, newValue: any) => {
+    const blockIdsRef = get(blockIdsRefAtom);
+    const nextValue =
+      typeof newValue === "function"
+        ? newValue(get(blockIdsBaseAtom))
+        : newValue;
+    blockIdsRef.current = nextValue;
+    set(blockIdsBaseAtom, nextValue);
+  }
+);
+
+const blockMapBaseAtom = atomWithStorage<BlockMapType>("block-map", {});
+export const blockMapRefAtom = atom<{ current: BlockMapType }>({
+  current: {},
+});
+export const blockMapAtom = atom(
+  (get) => get(blockMapBaseAtom),
+  (get, set, newValue: any) => {
+    const blockMapRef = get(blockMapRefAtom);
+    const nextValue =
+      typeof newValue === "function"
+        ? newValue(get(blockMapBaseAtom))
+        : newValue;
+    blockMapRef.current = nextValue;
+    set(blockMapBaseAtom, nextValue);
+  }
+);
+
+export const contextMenuAtom = atom<{ origin: Point; size: Size } | null>(null);
+
+export const activeBlockUuidRefAtom = atom<{ current: string | null }>({
+  current: null,
+});

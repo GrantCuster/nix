@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Construct the command
+command="google-chrome-stable --app=https://$1"
+
+# Run the command
+$command

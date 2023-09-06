@@ -1,13 +1,18 @@
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import {
+  activeBlockUuidRefAtom,
   barItemMapAtom,
   blockIdsAtom,
+  blockIdsRefAtom,
   blockMapAtom,
+  blockMapRefAtom,
   blockMenuAtom,
   cameraAtom,
+  contextMenuAtom,
   createWorkspaceMenuAtom,
   cursorAtom,
+  cursorRefAtom,
   homeBarItemMap,
 } from "./atoms";
 import { v4 as uuid } from "uuid";
@@ -19,6 +24,7 @@ import {
   Camera,
   Point,
   Size,
+  TimerType,
   WorkspaceBlockType,
 } from "./Types";
 import {
@@ -27,8 +33,10 @@ import {
   useSelectWorkspace,
 } from "./hooks";
 import { useGesture } from "react-use-gesture";
-import { Button } from "./Bar";
+import { Button, getLogLimit } from "./Bar";
 import { XIcon } from "lucide-react";
+import { gruvbox } from "./consts";
+import { formatTime } from "./Timer";
 
 const cell = 24;
 
@@ -109,13 +117,13 @@ function Canvas() {
   const setCreateWorkspaceMenu = useSetAtom(createWorkspaceMenuAtom);
   const [cursor] = useAtom(cursorAtom);
   const setBarItemMap = useSetAtom(homeBarItemMap);
+  const setContextMenu = useSetAtom(contextMenuAtom);
 
   useEffect(() => {
     const handleFocus = () => {
       const stored = localStorage.getItem("barItemMap") || `{ }`;
       const data = JSON.parse(stored);
       setBarItemMap(data);
-      // setCacheBump(Date.now());
     };
     window.addEventListener("focus", handleFocus);
     return () => {
@@ -174,6 +182,17 @@ function Canvas() {
     };
   }, [cursor]);
 
+  // Disable context menu
+  useEffect(() => {
+    function preventContextMenu(e) {
+      e.preventDefault();
+    }
+    window.addEventListener("contextmenu", preventContextMenu);
+    return () => {
+      window.removeEventListener("contextmenu", preventContextMenu);
+    };
+  }, [cursor]);
+
   return (
     <div
       ref={ref}
@@ -184,14 +203,15 @@ function Canvas() {
         backgroundPosition: `${camera.x - 12}px ${camera.y - 12}px`,
       }}
       onPointerDown={(e) => {
-        setCreateWorkspaceMenu(null);
-        setCreateWorkspaceMenu({
-          origin: {
-            x: r(cursor.x),
-            y: r(cursor.y),
-          },
-        });
-        e.preventDefault();
+        if (e.button === 0) {
+          setCreateWorkspaceMenu({
+            origin: {
+              x: r(cursor.x),
+              y: r(cursor.y),
+            },
+          });
+          e.preventDefault();
+        }
       }}
     >
       <div
@@ -204,7 +224,9 @@ function Canvas() {
         <ActiveBlocks />
         <BlockMenu />
         <CreateWorkspaceMenu />
+        <ContextMenu />
       </div>
+      <div className="fixed top-0 h-[27px] bg-gruvbox-dark2 w-full left-0 pointer-events-none"></div>
     </div>
   );
 }
@@ -270,7 +292,7 @@ function Cursor() {
 
   return (
     <div
-      className="absolute rounded-full left-0 top-0 bg-gruvbox-foreground pointer-events-none"
+      className="absolute hidden rounded-full left-0 top-0 bg-gruvbox-foreground pointer-events-none"
       style={{
         transform: `translate(${position.x}px, ${position.y}px)`,
         width: cell,
@@ -278,6 +300,95 @@ function Cursor() {
       }}
     ></div>
   );
+}
+
+function ContextMenu() {
+  const [block, setContextMenu] = useAtom(contextMenuAtom);
+  const setBlockIds = useSetAtom(blockIdsAtom);
+  const setBlockMap = useSetAtom(blockMapAtom);
+  const [activeBlockUuidRef] = useAtom(activeBlockUuidRefAtom);
+  const blockMapRef = useAtomValue(blockMapRefAtom);
+  const blockIdsRef = useAtomValue(blockIdsRefAtom);
+
+  return block ? (
+    <div
+      className="absolute bg-gruvbox-background flex flex-col"
+      style={{
+        left: Math.round(block.origin.x),
+        top: Math.round(block.origin.y),
+        width: Math.round(block.size.width),
+        height: Math.round(block.size.height),
+        zIndex: 9999,
+      }}
+    >
+      <Button
+        className="block h-6 leading-6 text-left"
+        action={(e: PointerEvent) => {
+          const targetId = activeBlockUuidRef.current;
+          setContextMenu(null);
+          setBlockMap((prev: BlockMapType) => {
+            const maxZIndex = Math.max(
+              100,
+              ...blockIdsRef.current.map((id: string) => {
+                const zIndex = blockMapRef.current[id].zIndex ?? 100;
+                return zIndex;
+              })
+            );
+            return {
+              ...prev,
+              [prev[targetId!].uuid]: {
+                ...prev[targetId!],
+                zIndex: maxZIndex + 1,
+              },
+            };
+          });
+          e.stopPropagation();
+        }}
+      >
+        Bring to front
+      </Button>
+      <Button
+        className="block h-6 leading-6 text-left"
+        action={(e: PointerEvent) => {
+          const targetId = activeBlockUuidRef.current;
+          setContextMenu(null);
+          setBlockMap((prev: BlockMapType) => {
+            const minZIndex = Math.min(
+              100,
+              ...blockIdsRef.current.map((id: string) => {
+                const zIndex = blockMapRef.current[id].zIndex ?? 100;
+                return zIndex;
+              })
+            );
+            return {
+              ...prev,
+              [prev[targetId!].uuid]: {
+                ...prev[targetId!],
+                zIndex: minZIndex - 1,
+              },
+            };
+          });
+          e.stopPropagation();
+        }}
+      >
+        Send to back
+      </Button>
+      <Button
+        className="block h-6 leading-6 text-left"
+        action={(e: PointerEvent) => {
+          setBlockIds((prev) =>
+            prev.filter((b) => b !== activeBlockUuidRef.current)
+          );
+          setContextMenu(null);
+          e.stopPropagation();
+        }}
+      >
+        Delete
+      </Button>
+
+      <div className="absolute pointer-events-none -inset-px border-2 border-gruvbox-dark2"></div>
+    </div>
+  ) : null;
 }
 
 function ActiveBlocks() {
@@ -294,20 +405,42 @@ function ActiveBlocks() {
 }
 
 function Block({ block }: { block: BlockType }) {
+  const setContextMenu = useSetAtom(contextMenuAtom);
+  const [cursorRef] = useAtom(cursorRefAtom);
+  const [activeBlockUuidRef, setActiveBlockUuidRef] = useAtom(
+    activeBlockUuidRefAtom
+  );
+
   return (
     <div
       className="absolute bg-gruvbox-background"
       style={{
-        left: block.origin.x,
-        top: block.origin.y,
-        width: block.size.width,
-        height: block.size.height,
+        left: Math.round(block.origin.x),
+        top: Math.round(block.origin.y),
+        width: Math.round(block.size.width),
+        height: Math.round(block.size.height),
+        zIndex: block.zIndex,
+      }}
+      onPointerDown={(e) => {
+        if (e.button === 2) {
+          setActiveBlockUuidRef({ current: block.uuid });
+          setContextMenu({
+            origin: {
+              x: r(cursorRef.current.x),
+              y: r(cursorRef.current.y),
+            },
+            size: {
+              width: r(8 * cell),
+              height: r(6 * cell),
+            },
+          });
+        }
       }}
     >
       {block.type === "workspace" ? (
         <WorkspaceBlockContent block={block} />
       ) : null}
-      <div className="absolute pointer-events-none inset-0 border border-gruvbox-foreground"></div>
+      <div className="absolute pointer-events-none -inset-px border-2 border-gruvbox-dark2"></div>
     </div>
   );
 }
@@ -317,9 +450,7 @@ function WorkspaceBlockContent({ block }: { block: WorkspaceBlockType }) {
   const setBlockIds = useSetAtom(blockIdsAtom);
   const [camera] = useAtom(cameraAtom);
   const createOrSelectWorkspace = useCreateOrSelectWorkspace();
-  const [cacheBump, setCacheBump] = useState(Date.now());
-  const [barItemMap] = useAtom(barItemMapAtom);
-
+  const [barItemMap] = useAtom(homeBarItemMap);
   const originRef = useRef<Point>(block.origin);
   const sizeRef = useRef<Size>(block.size);
 
@@ -334,16 +465,6 @@ function WorkspaceBlockContent({ block }: { block: WorkspaceBlockType }) {
       };
     });
   };
-
-  // useEffect(() => {
-  //   const handleFocus = () => {
-  //     setCacheBump(Date.now());
-  //   };
-  //   window.addEventListener("focus", handleFocus);
-  //   return () => {
-  //     window.removeEventListener("focus", handleFocus);
-  //   };
-  // }, []);
 
   const dragHandle = useGesture({
     onDragStart: () => {
@@ -363,15 +484,17 @@ function WorkspaceBlockContent({ block }: { block: WorkspaceBlockType }) {
         { x: movement[0], y: movement[1] },
         { x: 0, y: 0, z: camera.z }
       );
-      const x = f(originRef.current.x + canvasChange.x);
-      const y = f(originRef.current.y + canvasChange.y);
+      const x = r(originRef.current.x + canvasChange.x);
+      const y = r(originRef.current.y + canvasChange.y);
       setBlock("origin", { x, y });
     },
   });
 
   const resizeHandle = useGesture({
     onPointerDown: ({ event }) => {
-      event.stopPropagation();
+      if (event.button === 0) {
+        event.stopPropagation();
+      }
     },
     onDragStart: () => {
       sizeRef.current = { ...block.size };
@@ -400,7 +523,9 @@ function WorkspaceBlockContent({ block }: { block: WorkspaceBlockType }) {
     <div
       className="absolute cursor-pointer inset-0 flex flex-col text-sm"
       onPointerDown={(e) => {
-        e.stopPropagation();
+        if (e.button === 0) {
+          e.stopPropagation();
+        }
       }}
     >
       <div className="flex">
@@ -410,34 +535,29 @@ function WorkspaceBlockContent({ block }: { block: WorkspaceBlockType }) {
         >
           {block.name}
         </div>
-        <Button
-          className="w-8 px-0 bg-transparent flex justify-center items-center bg"
-          action={(e) => {
-            e.stopPropagation();
-            setBlockIds((prev) => prev.filter((b) => b !== block.uuid));
-          }}
-        >
-          <XIcon size={13} />
-        </Button>
       </div>
       <button
         className="flex flex-col grow vrow w-full cursor-pointer"
-        onPointerDown={() => {
-          createOrSelectWorkspace(block.name);
+        onPointerDown={(e) => {
+          if (e.button === 0) {
+            createOrSelectWorkspace(block.name);
+          }
         }}
       >
         <div
           className="grow w-full "
           style={{
-            backgroundSize: "contain",
+            backgroundSize: "100% 100%",
             backgroundPosition: "center center",
             backgroundRepeat: "no-repeat",
             backgroundImage: `url(http://localhost:6049/home/grant/screenshots/workspaces/${encodeURI(
               block.name
-            )}.png?cacheBump=${cacheBump})`,
+            )}.png?cacheBump=${
+              barItemMap[block.name]?.timers[0].currentSeconds
+            })`,
           }}
         ></div>
-        <div className="h-6">
+        <div className="h-6 w-full leading-6">
           {barItemMap[block.name] !== undefined ? (
             <AppSpaceTimers timers={barItemMap[block.name].timers} />
           ) : null}
@@ -485,7 +605,7 @@ function CreateWorkspaceMenu() {
         left: createWorkspaceMenu.origin.x,
         top: createWorkspaceMenu.origin.y,
         width: cell * 10,
-        height: cell * 2,
+        zIndex: 9999,
       }}
       onPointerDown={(e) => {
         e.stopPropagation();
@@ -498,6 +618,10 @@ function CreateWorkspaceMenu() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            const currentZIndexes = blockIds.map(
+              (id) => blockMap[id].zIndex ?? 100
+            );
+            const currentMaxZ = Math.max(...currentZIndexes) ?? 100;
             const newWorkspace = {
               uuid: "b" + uuid(),
               type: "workspace",
@@ -508,6 +632,7 @@ function CreateWorkspaceMenu() {
                 width: 12 * cell,
                 height: 8 * cell,
               },
+              zIndex: currentMaxZ + 1,
             };
             setBlockMap((prev) => {
               return {
@@ -530,6 +655,9 @@ function CreateWorkspaceMenu() {
           />
         </form>
       </div>
+      <Button className="block w-full text-left" action={() => {}}>
+        Color block
+      </Button>
       <div className="absolute inset-0 border border-gruvbox-foreground pointer-events-none"></div>
     </div>
   ) : null;
@@ -623,7 +751,7 @@ function AppSpaceTimer({ timer }: { timer: TimerType }) {
       : timer.limitSeconds;
 
   return (
-    <div className="flex grow text-gruvbox-light4 gap-3">
+    <div className="flex grow text-gruvbox-light4 gap-2 pr-2">
       <div className="grow text-center relative">
         <div
           className={`absolute left-0 top-0 bottom-0 ${

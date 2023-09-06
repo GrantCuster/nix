@@ -12,5 +12,9 @@ html {
 }
 html,
 button {
-  cursor: crosshair;
+}
+
+.custom-selection::selection {
+  background: #ebdbb2;
+  color: #282828;
 }

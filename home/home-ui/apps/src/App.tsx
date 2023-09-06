@@ -17,9 +17,12 @@ import Bar, { Button, getLogLimit } from "./Bar";
 import { TimerType } from "./Types";
 import { formatTime } from "./Timer";
 import Canvas from "./Canvas";
+import Text from "./Text";
 
 function Wrapper() {
-  const [mode, setMode] = useState<"bar" | "homepage" | "canvas">("bar");
+  const [mode, setMode] = useState<"bar" | "homepage" | "canvas" | "text">(
+    "bar"
+  );
 
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -30,6 +33,9 @@ function Wrapper() {
     } else if (pathname === "/canvas") {
       setMode("canvas");
       document.title = "canvas";
+    } else if (pathname === "/text") {
+      setMode("text");
+      document.title = "text";
     } else {
       setMode("homepage");
       document.title = "Homepage";
@@ -40,7 +46,13 @@ function Wrapper() {
     }
   });
 
-  return mode === "bar" ? <Bar /> : mode === "canvas" ? <Canvas /> : <App />;
+  return (
+    <>
+      {mode === "bar" ? <Bar /> : null}
+      {mode === "canvas" ? <Canvas /> : null}
+      {mode === "text" ? <Text /> : null}
+    </>
+  );
 }
 
 function App() {
@@ -275,10 +287,10 @@ function ListSpaces() {
           return (
             <div key={space.id} className="w-full border border-gruvbox-dark3">
               <button
-                className="w-full gap-4 cursor-pointer items-center flex hover:bg-gruvbox-dark1 focus:bg-gruvbox-dark1 focus:outline-none focus:border-none"
+                className="w-full gap-4 cursor-pointer items-center justify-left flex hover:bg-gruvbox-dark1 focus:bg-gruvbox-dark1 focus:outline-none focus:border-none"
                 onClick={() => selectWorkspace(space)}
               >
-                <div className="pl-4 w-2/3 overflow-hidden overflow-ellipsis h-6">
+                <div className="pl-4 w-2/3 text-left overflow-hidden overflow-ellipsis h-6">
                   {splits.length > 1 ? (
                     <div className="flex relative">
                       <div className="text-left h-full text-gruvbox-light4 flex items-center">

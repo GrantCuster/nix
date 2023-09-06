@@ -9,7 +9,7 @@ node ~/.config/home-ui/server/server.mjs &
 npm run --prefix ~/.config/home-ui/apps preview &
 sleep 1
 google-chrome-stable --app=http://localhost:6051/bar &
-google-chrome-stable --app=http://localhost:6051/canvas &
+google-chrome-stable --app=http://localhost:6051/text &
 sleep 2
 hyprctl dispatch movetoworkspacesilent "1,title:^(canvas)$"
 hyprctl dispatch renameworkspace 1 home
