@@ -26,7 +26,12 @@ import {
   barItemMapAtom,
   barMenuIsOpenAtom,
 } from "./atoms";
-import Timer, { formatTime, formatTimeColon, parseTimeString } from "./Timer";
+import Timer, {
+  formatDecimalTime,
+  formatTime,
+  formatTimeColon,
+  parseTimeString,
+} from "./Timer";
 import { twMerge } from "tailwind-merge";
 import { BarItemMapType, BarType, TimerType } from "./Types";
 
@@ -57,7 +62,7 @@ function WorkspaceTitle() {
     <div className="px-2">{getCurrentDate()}</div>
   ) : (
     <Button
-      className="bg-gruvbox-background hover:bg-gruvbox-background px-0"
+      className="bg-gruvbox-transparent hover:bg-gruvbox-transparent px-0"
       action={() => {
         sendJsonMessage({ action: "command", payload: "go_home_space" });
       }}
@@ -225,7 +230,7 @@ function NewTimer({
       <div className="flex items-stretch">
         {timer.isActive ? (
           <Button
-            className="w-7 px-0 flex justify-center items-center"
+            className="w-7 px-0 hidden justify-center items-center"
             action={() => {
               setTimerProp("isActive", false);
             }}
@@ -234,7 +239,7 @@ function NewTimer({
           </Button>
         ) : (
           <Button
-            className="w-7 px-0 flex justify-center items-center"
+            className="w-7 hidden px-0 justify-center items-center"
             action={() => {
               setTimerProp("isActive", true);
             }}
@@ -243,7 +248,7 @@ function NewTimer({
           </Button>
         )}
         <Button
-          className="w-7 px-0 flex justify-center items-center"
+          className="w-7 hidden px-0 justify-center items-center"
           action={() => {
             setTimerProp("currentSeconds", 0);
           }}
@@ -251,7 +256,7 @@ function NewTimer({
           <TimerResetIcon size={13} />
         </Button>
       </div>
-      <div className="grow text-center relative">
+      <div className="grow text-center relative hidden">
         <div
           className={`absolute left-0 top-0 bottom-0 ${
             timer.isActive ? "bg-gruvbox-dark2" : "bg-gruvbox-dark1"
@@ -260,13 +265,17 @@ function NewTimer({
             width: (timer.currentSeconds / activeLimit) * 100 + "%",
           }}
         ></div>
-        <div className="relative">{formatTimeColon(timer.currentSeconds)}</div>
+        <div className="relative hidden">
+          {formatTimeColon(timer.currentSeconds)}
+        </div>
       </div>
-      <div className="px-2 text-gruvbox-light3 ">
+      <div className="px-2 hidden">
         {timer.limitSeconds === "log"
           ? formatTime(activeLimit)
           : formatTime(timer.limitSeconds)}
       </div>
+      <div className="grow"></div>
+      <div className="px-2">{formatTimeColon(timer.currentSeconds)}</div>
     </div>
   );
 }

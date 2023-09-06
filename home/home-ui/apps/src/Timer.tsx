@@ -18,10 +18,10 @@ export const formatTime = (seconds: number) => {
   const adjustedSeconds = seconds % 60;
   let format = "";
   if (hours > 0) {
-    format += hours + "h ";
+    format += hours + "h";
   }
   if (adjustedMinutes > 0) {
-    format += adjustedMinutes + "m ";
+    format += adjustedMinutes + "m";
   }
   if (adjustedSeconds > 0) {
     format += adjustedSeconds + "s";
@@ -39,7 +39,11 @@ export const formatTimeColon = (seconds: number) => {
     format += hours + ":";
   }
   if (adjustedMinutes > 0) {
-    format += adjustedMinutes + ":";
+    if (hours > 0) {
+      format += adjustedMinutes.toString().padStart(2, "0") + ":";
+    } else {
+      format += adjustedMinutes + ":";
+    }
   } else {
     if (hours > 0) {
       format += "00:";
@@ -48,6 +52,32 @@ export const formatTimeColon = (seconds: number) => {
     }
   }
   format += adjustedSeconds.toString().padStart(2, "0");
+  return format;
+};
+
+export const formatDecimalTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const adjustedMinutes = minutes % 60;
+  const adjustedSeconds = seconds % 60;
+  let format = "";
+  // if (hours > 0) {
+  //   format += hours + ":";
+  // }
+  // if (adjustedMinutes > 0) {
+  //   if (hours > 0) {
+  //     format += adjustedMinutes.toString().padStart(2, "0") + ":";
+  //   } else {
+  //     format += adjustedMinutes + ":";
+  //   }
+  // } else {
+  //   if (hours > 0) {
+  //     format += "00:";
+  //   } else {
+  //     format += "0:";
+  //   }
+  // }
+  format += Math.floor((adjustedSeconds / 60) * 100) / 100;
   return format;
 };
 
@@ -177,9 +207,7 @@ function Timer() {
               setShowTimer(!showTimer);
             }}
           >
-            {showTimer ? (
-              <div>{formatTimeColon(Math.min(time, limit))}</div>
-            ) : null}
+            {showTimer ? <div>{formatTime(Math.min(time, limit))}</div> : null}
           </div>
           {editingLimit ? (
             <div className="flex h-full mix-blend-difference">

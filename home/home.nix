@@ -84,6 +84,8 @@
 
     imagemagick
 
+    wf-recorder
+
     bc
     autojump
 
@@ -115,6 +117,7 @@
     (writeShellScriptBin "restart_home" (builtins.readFile ./scripts/restart_home))
     (writeShellScriptBin "hyprcwd" (builtins.readFile ./scripts/hyprcwd))
     (writeShellScriptBin "hyprshot" (builtins.readFile ./scripts/hyprshot))
+    (writeShellScriptBin "hyprrecord" (builtins.readFile ./scripts/hyprrecord))
     (writeShellScriptBin "resize_window_percent" (builtins.readFile ./scripts/resize_window_percent))
     (writeShellScriptBin "browserapp" (builtins.readFile ./scripts/browserapp))
   ];
@@ -164,7 +167,7 @@
     enableCompletion = true;
     enableAutosuggestions = true;
     shellAliases = {
-      b = browserapp
+      b = "browserapp";
       };
    # oh my zsh gets us substring search
     # the option for enabling it separately was not working for me
