@@ -120,6 +120,8 @@
     (writeShellScriptBin "hyprrecord" (builtins.readFile ./scripts/hyprrecord))
     (writeShellScriptBin "resize_window_percent" (builtins.readFile ./scripts/resize_window_percent))
     (writeShellScriptBin "browserapp" (builtins.readFile ./scripts/browserapp))
+    (writeShellScriptBin "record_region" (builtins.readFile ./scripts/record_region))
+    (writeShellScriptBin "record_window" (builtins.readFile ./scripts/record_window))
   ];
 
   home.sessionVariables = {
