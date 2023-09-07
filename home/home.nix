@@ -122,6 +122,8 @@
     (writeShellScriptBin "browserapp" (builtins.readFile ./scripts/browserapp))
     (writeShellScriptBin "record_region" (builtins.readFile ./scripts/record_region))
     (writeShellScriptBin "record_window" (builtins.readFile ./scripts/record_window))
+    (writeShellScriptBin "giffify" (builtins.readFile ./scripts/giffify))
+    (writeShellScriptBin "last_recording_to_gif" (builtins.readFile ./scripts/last_recording_to_gif))
   ];
 
   home.sessionVariables = {

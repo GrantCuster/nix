@@ -1,9 +1,10 @@
 #!/bin/bash
 
-local monitors=$(hyprctl -j monitors)
-local clients=$(hyprctl -j clients | jq -r '[.[] | select(.workspace.id | contains('$(echo $monitors | jq -r 'map(.activeWorkspace.id) | join(",")')'))]')
-Print "Monitors: %s\n" "$monitors"
-Print "Clients: %s\n" "$clients"
-local boxes="$(echo $clients | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1]) \(.title)"')"
+monitors=$(hyprctl -j monitors)
+clients=$(hyprctl -j clients | jq -r '[.[] | select(.workspace.id | contains('$(echo $monitors | jq -r 'map(.activeWorkspace.id) | join(",")')'))]')
+boxes="$(echo $clients | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1]) \(.title)"')"
 
-wf-recorder -f /home/grant/screenrecordings/$(date +'%Y-%m-%d-%H%M%S_recording.mp4') -g "$(eval echo $boxes | slurp)"
+echo "$boxes"
+geometry=$(slurp -r <<<"$boxes")
+echo "$geometry"
+wf-recorder -f /home/grant/screenrecordings/$(date +'%Y-%m-%d-%H%M%S_recording.mp4') -g "$geometry"

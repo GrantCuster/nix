@@ -34,6 +34,7 @@ declare -A options=(
 	['screenshot region']='hyprshot -m region -o /home/grant/screenshots/'
 	['record monitor']="wf-recorder -f /home/grant/screenrecordings/$(date +'%Y-%m-%d-%H%M%S_recording.mp4')"
 	['record region']="record_region"
+	['record window']="record_window"
 	['thunar']='thunar'
 	['spotify']='spotify'
 	['reboot']='reboot'

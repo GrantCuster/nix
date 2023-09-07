@@ -1,0 +1,8 @@
+#!/bin/bash
+
+last=$(ls -p ~/screenrecordings/ | tail -n 1)
+  filename="${last%%.*}"
+  gifname="gif-$(echo $filename | cut -d- -f2-).gif"
+  giffify -i ~/screenrecordings/$last -o ~/gifs/$gifname -w 800
+  google-chrome-stable --app=~/gifs/$gifname &
+  alacritty --hold -e ls -sh ~/gifs/$gifname 
