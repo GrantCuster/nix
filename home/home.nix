@@ -220,8 +220,9 @@
     recursive = true;
   };
 
-  xdg.configFile[".tmux.conf"] = {
-    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/tmux/.tmux.conf";
+  xdg.configFile.tmux = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/tmux";
+    recursive = true;
   };
 
  
