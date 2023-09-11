@@ -8,7 +8,7 @@ function matchArray(text: string) {
   }
 
   // Use a regular expression to find matches
-  const regex = /\{([^}]+)\}/g;
+  const regex = /\{[^{}]*[{}]/g;
   const matches = [];
 
   let lastIndex = 0;
@@ -79,16 +79,18 @@ function Text() {
             return typeof el === "string" ? (
               <>{el}</>
             ) : (
-              <button
-                className="text-gruvbox-orange pointer-events-auto cursor-pointer"
-                onClick={() => {
+              <span
+                tabIndex={0}
+                className="text-gruvbox-orange inline pointer-events-auto cursor-pointer focus:outline-none focus:bg-gruvbox-dark3"
+                onClick={(e) => {
+                  e.stopPropagation();
                   createOrSelectWorkspace(el.match);
                 }}
               >
                 <span className="text-gruvbox-dark4">{`{`}</span>
                 {el.match}
                 <span className="text-gruvbox-dark4">{`}`}</span>
-              </button>
+              </span>
             );
           })}
         </div>

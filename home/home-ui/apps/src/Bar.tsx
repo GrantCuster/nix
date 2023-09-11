@@ -62,7 +62,7 @@ function WorkspaceTitle() {
     <div className="px-2">{getCurrentDate()}</div>
   ) : (
     <Button
-      className="bg-gruvbox-transparent hover:bg-gruvbox-transparent px-0"
+      className="bg-gruvbox-transparent hover:bg-gruvbox-transparent hover:underline px-0"
       action={() => {
         sendJsonMessage({ action: "command", payload: "go_home_space" });
       }}
@@ -293,18 +293,7 @@ function Bar() {
       <div className="flex justify-between items-center text-gruvbox-light2 max-h-[26px] h-full">
         <div className="flex h-full items-center">
           <Button
-            className="hidden"
-            action={() => {
-              sendJsonMessage({
-                action: "command",
-                payload: "back_to_workspace",
-              });
-            }}
-          >
-            <ArrowLeftIcon size={14} />
-          </Button>
-          <Button
-            className="bg-transparent hover:bg-transparent"
+            className="bg-transparent hover:bg-transparent hover:underline"
             action={() => {
               sendJsonMessage({ action: "command", payload: "go_home_space" });
             }}
@@ -319,7 +308,7 @@ function Bar() {
                 </div>
               </div>
             ) : (
-              <div className="px-2 h-full flex items-center text-gruvbox-foreground">
+              <div className="px-2 h-full hover:underline flex items-center text-gruvbox-foreground">
                 {activeWorkspace}
               </div>
             )}

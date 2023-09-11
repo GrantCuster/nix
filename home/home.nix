@@ -49,10 +49,7 @@
     rofi-wayland-unwrapped
     jq
     wl-clipboard
-    
     xfce.thunar
-
-    # Neovim related
     gcc
     ripgrep
     fd
@@ -60,34 +57,25 @@
     unzip
     wget
     nodejs_20
-
     swww
-
     ripdrag
-
     spotify
-    
     hugo
-
     websocat
-
     slurp
     grim
-
     acpi
-
     qmk
-
     usbutils
-
     inotify-tools
-
     imagemagick
-
+    ffmpeg
     wf-recorder
-
     bc
     autojump
+    lazygit
+    tmux
+    screen
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
@@ -231,6 +219,12 @@
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/home-ui";
     recursive = true;
   };
+
+  xdg.configFile[".tmux.conf"] = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/tmux/.tmux.conf";
+  };
+
+ 
 
   # Enable home-manager and git
   programs.home-manager.enable = true;

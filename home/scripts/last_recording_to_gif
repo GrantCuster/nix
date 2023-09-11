@@ -1,8 +1,27 @@
 #!/bin/bash
 
+# Define default values
+width_default=800
+
+# Check if the optional argument is provided
+if [ -n "$1" ]; then
+	width=$1
+else
+	width=$width_default
+fi
+
 last=$(ls -p ~/screenrecordings/ | tail -n 1)
-  filename="${last%%.*}"
-  gifname="gif-$(echo $filename | cut -d- -f2-).gif"
-  giffify -i ~/screenrecordings/$last -o ~/gifs/$gifname -w 800
-  google-chrome-stable --app=~/gifs/$gifname &
-  alacritty --hold -e ls -sh ~/gifs/$gifname 
+filename="${last%%.*}"
+gifname="gif-$(echo $filename | cut -d- -f2-).gif"
+giffify -i ~/screenrecordings/$last -o ~/gifs/$gifname -w $width
+google-chrome-stable --app=file:///home/grant/gifs/$gifname
+sleep 0.2
+address=$(hyprctl clients -j | jq -r 'last | .address')
+hyprctl dispatch focuswindow address:$address
+hyprctl dispatch togglefloating
+hyprctl dispatch resizeactive exact 800 640
+hyprctl dispatch centerwindow
+file_size_bytes=$(stat -c %s /home/grant/gifs/$gifname)
+file_size_mb=$(echo "scale=1; $file_size_bytes / (1024 * 1024)" | bc)
+formatted_file_size_mb=$(printf "%.1f" "$file_size_mb")
+notify-send -t 10000 "gif is $formatted_file_size_mb MB"

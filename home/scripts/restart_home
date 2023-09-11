@@ -5,11 +5,11 @@ kill -9 $(ps aux | grep "npm run preview" | awk '{print $2}')
 kill -9 $(ps aux | grep "app=http://localhost:6051/bar" | awk '{print $2}')
 kill -9 $(ps aux | grep "app=http://localhost:6051/canvas" | awk '{print $2}')
 
-node ~/.config/home-ui/server/server.mjs &
-npm run --prefix ~/.config/home-ui/apps preview &
+node ~/.config/home-ui/server/server.mjs
+npm run --prefix ~/.config/home-ui/apps preview
 sleep 1
-google-chrome-stable --app=http://localhost:6051/bar &
-google-chrome-stable --app=http://localhost:6051/text &
+google-chrome-stable --app=http://localhost:6051/bar
+google-chrome-stable --app=http://localhost:6051/text
 sleep 2
 hyprctl dispatch movetoworkspacesilent "1,title:^(canvas)$"
 hyprctl dispatch renameworkspace 1 home
