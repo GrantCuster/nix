@@ -76,6 +76,8 @@
     lazygit
     tmux
     screen
+    libinput-gestures
+    mods
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
@@ -112,6 +114,7 @@
     (writeShellScriptBin "record_window" (builtins.readFile ./scripts/record_window))
     (writeShellScriptBin "giffify" (builtins.readFile ./scripts/giffify))
     (writeShellScriptBin "last_recording_to_gif" (builtins.readFile ./scripts/last_recording_to_gif))
+    (writeShellScriptBin "restart_libinput_gestures" (builtins.readFile ./scripts/restart_libinput_gestures))
   ];
 
   home.sessionVariables = {
@@ -225,7 +228,9 @@
     recursive = true;
   };
 
- 
+  xdg.configFile."libinput-gestures.conf" = {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/home/libinput-gestures/libinput-gestures.conf";
+  };
 
   # Enable home-manager and git
   programs.home-manager.enable = true;
