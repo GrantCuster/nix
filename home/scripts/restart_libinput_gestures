@@ -1,17 +1,4 @@
 #!/bin/bash
 
-# Define the command to start libinput-gestures
-START_COMMAND="libinput-gestures"
-
-# Check if libinput-gestures is already running
-if pgrep -x "$START_COMMAND" >/dev/null; then
-    echo "libinput-gestures is already running. Restarting..."
-    pkill -x "$START_COMMAND"  # Stop libinput-gestures
-    sleep 2  # Wait for a moment before starting again
-fi
-
-# Start libinput-gestures
-echo "Starting libinput-gestures..."
-$START_COMMAND &
-
-echo "libinput-gestures started successfully."
+ps -ef | grep libinput-gestures | grep -v grep | awk '{print $2}' | xargs kill
+libinput-gestures &

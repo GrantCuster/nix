@@ -78,6 +78,7 @@
     screen
     libinput-gestures
     mods
+    lf
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
@@ -163,6 +164,7 @@
     enableAutosuggestions = true;
     shellAliases = {
       b = "browserapp";
+      t = "tmux new-session -A -s $(pwd | awk -F / '{print $NF}')";
       };
    # oh my zsh gets us substring search
     # the option for enabling it separately was not working for me

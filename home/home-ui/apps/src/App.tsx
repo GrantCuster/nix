@@ -18,11 +18,12 @@ import { TimerType } from "./Types";
 import { formatTime } from "./Timer";
 import Canvas from "./Canvas";
 import Text from "./Text";
+import List from "./List";
 
 function Wrapper() {
-  const [mode, setMode] = useState<"bar" | "homepage" | "canvas" | "text">(
-    "bar"
-  );
+  const [mode, setMode] = useState<
+    "bar" | "homepage" | "canvas" | "list" | "text"
+  >("bar");
 
   useEffect(() => {
     const pathname = window.location.pathname;
@@ -36,6 +37,9 @@ function Wrapper() {
     } else if (pathname === "/text") {
       setMode("text");
       document.title = "text";
+    } else if (pathname === "/list") {
+      setMode("list");
+      document.title = "list";
     } else {
       setMode("homepage");
       document.title = "Homepage";
@@ -51,6 +55,7 @@ function Wrapper() {
       {mode === "bar" ? <Bar /> : null}
       {mode === "canvas" ? <Canvas /> : null}
       {mode === "text" ? <Text /> : null}
+      {mode === "list" ? <List /> : null}
     </>
   );
 }

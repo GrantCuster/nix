@@ -48,6 +48,7 @@ declare -A options=(
 	['position home bar']="position_home_bar"
 	['make gif from recording']="last_recording_to_gif"
 	['make wide gif from recording']="last_recording_to_gif 1200"
+	['restart libinput gestures']="restart_libinput_gestures"
 )
 
 # Get bookmark choices and add them to the options array
