@@ -28,17 +28,22 @@ for item in "${names_array[@]}"; do
 	fi
 done
 
-selected_name=${sorted[0]}
+selected_name=""
 
 if [[ "$current_space" != "home" ]]; then
 	index=""
 	for i in "${!sorted[@]}"; do
+		echo "${sorted[i]}"
 		if [[ "${sorted[i]}" == "$current_space" ]]; then
 			index="${i}"
 		fi
 	done
+  if [[ "$index" == "0" ]]; then
+    selected_name="home"
+  else
     next="$((index - 1))"
     selected_name=${sorted[next]}
+  fi
 fi
 
 if [[ "$selected_name" != "" ]]; then

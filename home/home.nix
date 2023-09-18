@@ -118,6 +118,7 @@
     (writeShellScriptBin "restart_libinput_gestures" (builtins.readFile ./scripts/restart_libinput_gestures))
     (writeShellScriptBin "back_one_recent" (builtins.readFile ./scripts/back_one_recent))
     (writeShellScriptBin "forward_one_recent" (builtins.readFile ./scripts/forward_one_recent))
+    (writeShellScriptBin "set_workspace_created_at" (builtins.readFile ./scripts/set_workspace_created_at))
   ];
 
   home.sessionVariables = {

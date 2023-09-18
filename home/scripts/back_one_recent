@@ -28,7 +28,7 @@ for item in "${names_array[@]}"; do
 	fi
 done
 
-selected_name=""
+selected_name="${sorted[0]}"
 
 if [[ "$current_space" != "home" ]]; then
 	index=""

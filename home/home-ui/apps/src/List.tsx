@@ -58,20 +58,49 @@ function List() {
         />
       </form>
       <div className="flex flex-col gap-[2px] pb-[2px] bg-gruvbox-dark0">
-        {entries.map((workspace) => (
-          <button
-            key={workspace.id}
-            className="block w-full px-3 text-left py-2 bg-gruvbox-background hover:bg-gruvbox-dark1"
-            onClick={() => {
-              createOrSelectWorkspace(workspace.name);
-            }}
-          >
-            {workspace.name}
-          </button>
-        ))}
+        {entries.map((workspace) => {
+          return (
+            <button
+              key={workspace.id}
+              className={`block w-full px-3 text-left py-2 bg-gruvbox-background hover:bg-gruvbox-dark1 ${
+                workspace.name.includes("task:")
+                  ? "border-l-2 border-l-gruvbox-green"
+                  : ""
+              }`}
+              onClick={() => {
+                createOrSelectWorkspace(workspace.name);
+              }}
+            >
+              <FormatTask name={workspace.name} stacked={true} />
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
 
 export default List;
+
+function FormatTask({
+  name,
+  stacked = false,
+}: {
+  name: string;
+  stacked: boolean;
+}) {
+  const splits = name.split(":");
+
+  return splits.length > 1 ? (
+    <div className={`${stacked ? "" : "flex"}`}>
+      <div
+        className={`text-gruvbox-light3 ${stacked ? "text-xs uppercase" : ""}`}
+      >
+        {splits[0]}:
+      </div>
+      <div>{splits[1]}</div>
+    </div>
+  ) : (
+    name
+  );
+}

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Check if the JSON file exists, and create it if not
+JSON_FILE="/tmp/workspaces_created.json"
+if [ ! -e "$JSON_FILE" ]; then
+    echo "{}" > "$JSON_FILE"
+fi
+
+# Check if there is one argument provided for the key
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <key>"
+    exit 1
+fi
+
+KEY="$1"
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# Check if the key already exists in the JSON file
+EXISTING_TIMESTAMP=$(jq -r ".$KEY" "$JSON_FILE")
+
+# If the key exists, update the timestamp; otherwise, add a new key-value pair
+if [ "$EXISTING_TIMESTAMP" != "null" ]; then
+    jq ".$KEY=\"$TIMESTAMP\"" "$JSON_FILE" > "$JSON_FILE.tmp" && mv "$JSON_FILE.tmp" "$JSON_FILE"
+else
+    jq ".$KEY=\"$TIMESTAMP\"" "$JSON_FILE" > "$JSON_FILE.tmp" && mv "$JSON_FILE.tmp" "$JSON_FILE"
+fi
+
+echo "Timestamp for key '$KEY' set to '$TIMESTAMP' in $JSON_FILE"
