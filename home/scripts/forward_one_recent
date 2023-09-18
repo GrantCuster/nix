@@ -37,7 +37,7 @@ if [[ "$current_space" != "home" ]]; then
 			index="${i}"
 		fi
 	done
-	next="$((index += 1))"
+	next="$((index -= 1))"
 	selected_name=${sorted[next]}
 fi
 # get index of current space

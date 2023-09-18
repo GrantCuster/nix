@@ -117,6 +117,7 @@
     (writeShellScriptBin "last_recording_to_gif" (builtins.readFile ./scripts/last_recording_to_gif))
     (writeShellScriptBin "restart_libinput_gestures" (builtins.readFile ./scripts/restart_libinput_gestures))
     (writeShellScriptBin "back_one_recent" (builtins.readFile ./scripts/back_one_recent))
+    (writeShellScriptBin "forward_one_recent" (builtins.readFile ./scripts/forward_one_recent))
   ];
 
   home.sessionVariables = {
