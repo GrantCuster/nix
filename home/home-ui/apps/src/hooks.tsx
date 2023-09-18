@@ -91,18 +91,15 @@ export const useCreateOrSelectWorkspace = () => {
       payload += `save_history "/tmp/workspace_history" "${name}"; `;
     }
 
+    console.log(name);
+    sendJsonMessage({
+      action: "update_bar_name",
+      payload: name,
+    });
     sendJsonMessage({
       action: "command",
       payload,
     });
-
-    setTimeout(
-      () =>
-        sendJsonMessage({
-          action: "workspaces_updated",
-        }),
-      200
-    );
   }
 
   return createOrSelectWorkspace;
@@ -252,10 +249,8 @@ export const useSubscribeToActiveWorkspace = () => {
 
   useEffect(() => {
     if (lastJsonMessage) {
-      if (lastJsonMessage.action === "active_workspace_updated") {
-        if (lastJsonMessage.response !== "home") {
-          setActiveWorkspace(lastJsonMessage.response.replace("\n", ""));
-        }
+      if (lastJsonMessage.action === "update_bar_name") {
+        setActiveWorkspace(lastJsonMessage.response);
       }
     }
   }, [lastJsonMessage]);

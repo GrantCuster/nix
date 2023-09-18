@@ -58,21 +58,14 @@ wss.on("connection", function connection(ws) {
       console.log("get tree bare");
       const tree = await getWorkspaceTree();
       ws.send(JSON.stringify({ action: "get_workspace_tree", response: tree }));
-    } else if (json.action === "workspaces_updated") {
-      console.log("get tree update");
-      const tree = await getWorkspaceTree();
-      const active_workspace = await exec(
-        `hyprctl -j activeworkspace | jq -r .name`
-      );
+    } else if (json.action === "update_bar_name") {
+      console.log("update bar name");
       wss.clients.forEach(function each(client) {
         client.send(
           JSON.stringify({
-            action: "active_workspace_updated",
-            response: active_workspace.stdout,
+            action: "update_bar_name",
+            response: json.payload,
           })
-        );
-        client.send(
-          JSON.stringify({ action: "get_workspace_tree", response: tree })
         );
       });
     } else if (json.action === "active_todos_updated") {

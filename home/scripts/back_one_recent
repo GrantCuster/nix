@@ -27,17 +27,18 @@ for item in "${names_array[@]}"; do
 	fi
 done
 
-# Create an empty array to store the filtered result
-filtered_array=()
-
-# Loop through the original array and add strings that don't match the one to be filtered out
-for item in "${sorted[@]}"; do
-	if [[ "$item" != "$current_space" ]]; then
-		filtered_array+=("$item")
-	fi
-done
-
 selected_name=${filtered_array[0]}
+
+if [[ "$current_space" != "home" ]]; then
+	index=""
+	for i in "${!sorted[@]}"; do
+		if [[ "${sorted[i]}" != "$current_space" ]]; then
+			index="${i}"
+		fi
+	done
+	selected_name=${sorted[index += 1]}
+fi
+# get index of current space
 
 selected_id=""
 for i in "${!names_array[@]}"; do
@@ -47,8 +48,6 @@ for i in "${!names_array[@]}"; do
 	fi
 done
 
-save_history history_file "$selected_name"
-echo "save history $selected_name"
 hyprctl dispatch workspace "$selected_id"
 
 echo "{ \"action\": \"update_bar_name\", \"payload\": \"$selected_name\" }" | websocat ws://localhost:6050

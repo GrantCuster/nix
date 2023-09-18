@@ -14,6 +14,7 @@ function List() {
   useEffect(() => {
     const handleFocus = () => {
       inputRef.current!.focus();
+      getWorkspaceTree();
     };
     window.addEventListener("focus", handleFocus);
     return () => {
@@ -26,22 +27,28 @@ function List() {
     entries = workspaces.filter((w) => w.name.includes(input));
   }
 
+  // const tasks = entries.filter((w) => w.name.includes("task:"));
+  // const nontasks = entries.filter((w) => !w.name.includes("task:"));
+  //
+  // entries = [...tasks, ...nontasks];
+
   return (
     <div className="bg-gruvbox-background text-gruvbox-foreground h-screen w-full overflow-auto">
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (input !== "") {
-            if (entries.length === 0) {
+          if (entries.length === 0) {
+            if (input !== "") {
               createOrSelectWorkspace(input);
-            } else {
-              createOrSelectWorkspace(entries[0].name);
             }
-            setInput("");
+          } else {
+            createOrSelectWorkspace(entries[0].name);
           }
+          setInput("");
         }}
       >
         <input
+          ref={inputRef}
           type="text"
           className="bg-gruvbox-dark0 py-2 px-3 w-full"
           value={input}

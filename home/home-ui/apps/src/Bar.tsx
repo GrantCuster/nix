@@ -62,15 +62,15 @@ function WorkspaceTitle() {
     <div className="px-2">{getCurrentDate()}</div>
   ) : (
     <Button
-      className="bg-gruvbox-transparent hover:bg-gruvbox-transparent hover:underline px-0"
+      className="bg-gruvbox-transparent hover:bg-gruvbox-transparent hover:bg-gruvbox-dark1 px-0"
       action={() => {
         sendJsonMessage({ action: "command", payload: "go_home_space" });
       }}
     >
       {splits.length > 1 ? (
-        <div className="flex ">
-          <div className="px-2 bg-gruvbox-dark2">{splits[0]}</div>
-          <div className="px-2">{splits[1]}</div>
+        <div className="flex">
+          <div className="pl-2 text-gruvbox-light3">{splits[0]}:</div>
+          <div className="pr-2">{splits[1]}</div>
         </div>
       ) : (
         <div className="px-2">{activeWorkspace}</div>

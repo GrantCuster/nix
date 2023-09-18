@@ -6,4 +6,5 @@ current_space=$(hyprctl activeworkspace -j | jq -r .name)
 grim "/home/grant/screenshots/workspaces/${current_space}.png"
 hyprctl dispatch workspace 1
 # hyprctl dispatch movewindowpixel "exact 0 -40,title:^(home_bar)$"
-refresh_ui_websocket
+# refresh_ui_websocket
+echo '{ "action": "update_bar_name", "payload": "home" }' | websocat ws://localhost:6050
