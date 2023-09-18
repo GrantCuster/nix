@@ -2,6 +2,7 @@
 
 names_string=$(hyprctl workspaces -j | jq -r '.[].name')
 ids_string=$(hyprctl workspaces -j | jq -r '.[].id')
+
 current_space=$(hyprctl activeworkspace -j | jq -r .name)
 
 IFS=$'\n' read -r -d '' -a names_array <<<"$names_string"
@@ -27,29 +28,33 @@ for item in "${names_array[@]}"; do
 	fi
 done
 
-selected_name=${filtered_array[0]}
+selected_name=""
 
 if [[ "$current_space" != "home" ]]; then
 	index=""
 	for i in "${!sorted[@]}"; do
+		echo "${sorted[i]}"
 		if [[ "${sorted[i]}" == "$current_space" ]]; then
-			echo "${sorted[i]}"
 			index="${i}"
 		fi
 	done
-	next="$((index += 1))"
+	next="$((index + 1))"
 	selected_name=${sorted[next]}
 fi
-# get index of current space
 
-selected_id=""
-for i in "${!names_array[@]}"; do
-	if [[ "${names_array[i]}" == "$selected_name" ]]; then
-		selected_id="${ids_array[i]}"
-		break
-	fi
-done
+if [[ "$selected_name" != "" ]]; then
+	# get index of current space
+	echo "$selected_name"
 
-hyprctl dispatch workspace "$selected_id"
+	selected_id=""
+	for i in "${!names_array[@]}"; do
+		if [[ "${names_array[i]}" == "$selected_name" ]]; then
+			selected_id="${ids_array[i]}"
+			break
+		fi
+	done
 
-echo "{ \"action\": \"update_bar_name\", \"payload\": \"$selected_name\" }" | websocat ws://localhost:6050
+	hyprctl dispatch workspace "$selected_id"
+
+	echo "{ \"action\": \"update_bar_name\", \"payload\": \"$selected_name\" }" | websocat ws://localhost:6050
+fi
