@@ -1,8 +1,9 @@
 import useWebSocket from "react-use-websocket";
 import { socketUrl } from "./consts";
 import { SpaceType } from "./types";
-import { useEffect, useState } from "react";
+import { createElement, useEffect, useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
+import { marked } from "marked";
 import {
   activeWorkspaceAtom,
   barItemMapAtom,
@@ -72,6 +73,10 @@ export const useCreateWorkspace = () => {
   return createWorkspace;
 };
 
+export const underscoresForKeys = (string: string) => {
+  return string.replace(/ /g, "_").replace(/:/g, "_").replace(/-/g, "_");
+};
+
 export const useCreateOrSelectWorkspace = () => {
   const { sendJsonMessage } = useWebSocket(socketUrl, socketOptions);
   const { workspaces } = useGetWorkspaceTree();
@@ -88,10 +93,10 @@ export const useCreateOrSelectWorkspace = () => {
       payload += `hyprctl dispatch workspace empty; `;
       payload += `id=$(hyprctl activeworkspace -j | jq -r ".id"); `;
       payload += `hyprctl dispatch renameworkspace "$id" "${name}"; `;
+      payload += `set_workspace_created_at "${underscoresForKeys(name)}"; `;
       payload += `save_history "/tmp/workspace_history" "${name}"; `;
     }
 
-    console.log(name);
     sendJsonMessage({
       action: "update_bar_name",
       payload: name,
@@ -127,6 +132,30 @@ export const useGetWorkspaceTree = () => {
   }, [lastJsonMessage]);
 
   return { workspaces: currentTree, getWorkspaceTree };
+};
+
+export const useGetCreatedAtTimestamps = () => {
+  const { lastJsonMessage, sendJsonMessage } = useWebSocket(
+    socketUrl,
+    socketOptions
+  );
+  const [timestamps, setTimestamps] = useState<Record<string, string>>({});
+
+  function getCreatedAtTimestamps() {
+    sendJsonMessage({
+      action: "get_created_at_timestamps",
+    });
+  }
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      if (lastJsonMessage.action === "get_created_at_timestamps") {
+        setTimestamps(lastJsonMessage.response);
+      }
+    }
+  }, [lastJsonMessage]);
+
+  return { timestamps, getCreatedAtTimestamps };
 };
 
 export const useSubscribeToTodos = () => {
@@ -260,6 +289,70 @@ export const useSubscribeToActiveWorkspace = () => {
   }, []);
 
   return { activeWorkspace, getActiveWorkspace };
+};
+
+export const useGetActiveTodos = () => {
+  const { lastJsonMessage, sendJsonMessage } = useWebSocket(
+    socketUrl,
+    socketOptions
+  );
+  const [activeTodos, setActiveTodos] = useState<string[]>([]);
+
+  function getActiveTodos() {
+    sendJsonMessage({
+      action: "active_todos_updated",
+    });
+  }
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      if (lastJsonMessage.action === "active_todos_updated") {
+        const raw = lastJsonMessage.response;
+        const lines = raw.split("\n");
+        const filtered = lines.filter((l: string) => l.slice(0, 5) === "- [ ]");
+        const todos = filtered.map((l: string) => l.slice(6));
+        setActiveTodos(todos);
+      }
+    }
+  }, [lastJsonMessage]);
+
+  useEffect(() => {
+    getActiveTodos();
+  }, []);
+
+  return { activeTodos, getActiveTodos };
+};
+
+export const useGetCouldDo = () => {
+  const { lastJsonMessage, sendJsonMessage } = useWebSocket(
+    socketUrl,
+    socketOptions
+  );
+  const [couldDo, setCouldDo] = useState<string[]>([]);
+
+  function getCouldDo() {
+    sendJsonMessage({
+      action: "system_ideas_updated",
+    });
+  }
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      if (lastJsonMessage.action === "system_ideas_updated") {
+        const raw = lastJsonMessage.response;
+        const lines = raw.split("\n");
+        const filtered = lines.filter((l: string) => l.slice(0, 5) === "- [ ]");
+        const todos = filtered.map((l: string) => l.slice(6));
+        setCouldDo(todos);
+      }
+    }
+  }, [lastJsonMessage]);
+
+  useEffect(() => {
+    getCouldDo();
+  }, []);
+
+  return { couldDo, getCouldDo };
 };
 
 export const useSubscribeToBattery = () => {

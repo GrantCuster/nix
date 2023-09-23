@@ -21,7 +21,6 @@ async function getWorkspaceTree() {
   try {
     const workspaceExec = await exec(`hyprctl workspaces -j`);
     const tree = JSON.parse(workspaceExec.stdout);
-    console.log("get tree");
     for (const space of tree) {
       space.startTime = null;
     }
@@ -58,6 +57,16 @@ wss.on("connection", function connection(ws) {
       console.log("get tree bare");
       const tree = await getWorkspaceTree();
       ws.send(JSON.stringify({ action: "get_workspace_tree", response: tree }));
+    } else if (json.action === "get_created_at_timestamps") {
+      console.log("get created at timestamps");
+      const timestampsExec = await exec(`cat /tmp/workspaces_created.json`);
+      const timestamps = JSON.parse(timestampsExec.stdout);
+      ws.send(
+        JSON.stringify({
+          action: "get_created_at_timestamps",
+          response: timestamps,
+        })
+      );
     } else if (json.action === "update_bar_name") {
       console.log("update bar name");
       wss.clients.forEach(function each(client) {

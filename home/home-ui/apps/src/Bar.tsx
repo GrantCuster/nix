@@ -62,11 +62,7 @@ function WorkspaceTitle() {
     <div className="px-2">{getCurrentDate()}</div>
   ) : (
     <Button
-      className={`bg-gruvbox-transparent hover:bg-gruvbox-transparent hover:bg-gruvbox-dark1 px-0  ${
-        activeWorkspace.includes("task:")
-          ? "border-l-2 border-l-gruvbox-green"
-          : ""
-      }`}
+      className={`bg-gruvbox-transparent hover:bg-gruvbox-transparent hover:bg-gruvbox-dark1 px-0`}
       action={() => {
         sendJsonMessage({ action: "command", payload: "go_home_space" });
       }}

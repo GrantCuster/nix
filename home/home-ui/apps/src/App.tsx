@@ -19,10 +19,11 @@ import { formatTime } from "./Timer";
 import Canvas from "./Canvas";
 import Text from "./Text";
 import List from "./List";
+import Collage from "./Collage";
 
 function Wrapper() {
   const [mode, setMode] = useState<
-    "bar" | "homepage" | "canvas" | "list" | "text"
+    "bar" | "homepage" | "canvas" | "list" | "text" | "collage"
   >("bar");
 
   useEffect(() => {
@@ -40,6 +41,9 @@ function Wrapper() {
     } else if (pathname === "/list") {
       setMode("list");
       document.title = "list";
+    } else if (pathname === "/collage") {
+      setMode("collage");
+      document.title = "Palimpsest";
     } else {
       setMode("homepage");
       document.title = "Homepage";
@@ -56,6 +60,7 @@ function Wrapper() {
       {mode === "canvas" ? <Canvas /> : null}
       {mode === "text" ? <Text /> : null}
       {mode === "list" ? <List /> : null}
+      {mode === "collage" ? <Collage /> : null}
     </>
   );
 }
