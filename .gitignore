@@ -2,3 +2,4 @@ node_modules
 home/nvim/.git
 home/tmux/plugins/tpm/.git
 home/tmux/plugins/vim-tmux-navigator/.git
+result
