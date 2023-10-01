@@ -13,13 +13,23 @@
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs: {
-    # NixOS configuraiton entrypoint
-    # Available through 'nixos-rebuild --flake .#system'
+    # Available through 'nixos-rebuild --flake .#bix'
     nixosConfigurations = {
       bix = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; }; # Pass flake inputs to our config
         modules = [ 
           ./hosts/bix.nix 
+          ./system/system.nix 
+        ];
+      };
+    };
+
+    # Available through 'nixos-rebuild --flake .#skybax'
+    nixosConfigurations = {
+      bix = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; }; # Pass flake inputs to our config
+        modules = [ 
+          ./hosts/skybax.nix 
           ./system/system.nix 
         ];
       };
