@@ -26,7 +26,7 @@
 
     # Available through 'nixos-rebuild --flake .#skybax'
     nixosConfigurations = {
-      bix = nixpkgs.lib.nixosSystem {
+      skybax = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; }; # Pass flake inputs to our config
         modules = [ 
           ./hosts/skybax.nix 
