@@ -16,9 +16,12 @@
     # NixOS configuraiton entrypoint
     # Available through 'nixos-rebuild --flake .#system'
     nixosConfigurations = {
-      system = nixpkgs.lib.nixosSystem {
+      bix = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; }; # Pass flake inputs to our config
-        modules = [ ./system/system.nix ];
+        modules = [ 
+          ./hosts/bix.nix 
+          ./system/system.nix 
+        ];
       };
     };
 

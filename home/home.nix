@@ -56,6 +56,7 @@
     lazygit
     unzip
     wget
+    spotify-tui
     nodejs_20
     swww
     ripdrag
@@ -262,9 +263,16 @@
     };
   };
 
-  # Udiskie is probably not actually working
-  services.udiskie.enable = true;
-  services.udiskie.notify = true;
+ services.spotifyd = {
+   enable = true;
+   settings =
+     {
+       global = {
+         username = "1257825754";
+         password = "dLj403RcVZmy";
+       };
+     };
+ };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "23.05";

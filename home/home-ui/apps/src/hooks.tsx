@@ -291,68 +291,65 @@ export const useSubscribeToActiveWorkspace = () => {
   return { activeWorkspace, getActiveWorkspace };
 };
 
-export const useGetActiveTodos = () => {
+export const useGetFileTodos = (location: string, watchMessage: string) => {
   const { lastJsonMessage, sendJsonMessage } = useWebSocket(
     socketUrl,
     socketOptions
   );
-  const [activeTodos, setActiveTodos] = useState<string[]>([]);
+  const [todos, setTodos] = useState<string[]>([]);
 
-  function getActiveTodos() {
+  function getTodos() {
     sendJsonMessage({
-      action: "active_todos_updated",
+      action: watchMessage,
     });
+  }
+
+  function addTodo(newTodo: string, prepend = false) {
+    let newTodos = [];
+    if (prepend) {
+      newTodos = [newTodo, ...todos];
+    } else {
+      newTodos = [...todos, newTodo];
+    }
+    let payload = `echo -e "${newTodos
+      .map((t) => "- [ ] " + t)
+      .join("\n")}" > ${location}`;
+    sendJsonMessage({
+      action: "command",
+      payload,
+    });
+    getTodos();
+  }
+
+  function markTodoDone(doneTodo: string) {
+    const newTodos = todos.filter((todo) => todo !== doneTodo);
+    let payload = `echo -e "${newTodos
+      .map((t) => "- [ ] " + t)
+      .join("\n")}" > ${location}`;
+    sendJsonMessage({
+      action: "command",
+      payload,
+    });
+    getTodos();
   }
 
   useEffect(() => {
     if (lastJsonMessage) {
-      if (lastJsonMessage.action === "active_todos_updated") {
+      if (lastJsonMessage.action === watchMessage) {
         const raw = lastJsonMessage.response;
         const lines = raw.split("\n");
         const filtered = lines.filter((l: string) => l.slice(0, 5) === "- [ ]");
         const todos = filtered.map((l: string) => l.slice(6));
-        setActiveTodos(todos);
+        setTodos(todos);
       }
     }
   }, [lastJsonMessage]);
 
   useEffect(() => {
-    getActiveTodos();
+    getTodos();
   }, []);
 
-  return { activeTodos, getActiveTodos };
-};
-
-export const useGetCouldDo = () => {
-  const { lastJsonMessage, sendJsonMessage } = useWebSocket(
-    socketUrl,
-    socketOptions
-  );
-  const [couldDo, setCouldDo] = useState<string[]>([]);
-
-  function getCouldDo() {
-    sendJsonMessage({
-      action: "system_ideas_updated",
-    });
-  }
-
-  useEffect(() => {
-    if (lastJsonMessage) {
-      if (lastJsonMessage.action === "system_ideas_updated") {
-        const raw = lastJsonMessage.response;
-        const lines = raw.split("\n");
-        const filtered = lines.filter((l: string) => l.slice(0, 5) === "- [ ]");
-        const todos = filtered.map((l: string) => l.slice(6));
-        setCouldDo(todos);
-      }
-    }
-  }, [lastJsonMessage]);
-
-  useEffect(() => {
-    getCouldDo();
-  }, []);
-
-  return { couldDo, getCouldDo };
+  return { todos, addTodo, markTodoDone, getTodos };
 };
 
 export const useSubscribeToBattery = () => {

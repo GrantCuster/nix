@@ -5,9 +5,6 @@
     # ./users.nix
     inputs.hyprland.nixosModules.default
     {programs.hyprland.enable = true;}
-
-    # Import your generated (nixos-generate-config) hardware configuration
-    ./hardware-configuration.nix
   ];
 
   nixpkgs = {
@@ -95,6 +92,8 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+
+  services.tailscale.enable = true;
 
   # QMK keyboard rules
   hardware.keyboard.qmk.enable = true;

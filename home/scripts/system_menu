@@ -20,6 +20,7 @@ declare -A options=(
 	['brightness set darkest']='brightnessctl set 10%'
 	['Nix rebuild home']='alacritty --working-directory nix --title floating --hold -e home-manager switch --flake .#home'
 	['Nix rebuild system']='alacritty --working-directory nix --title floating --hold -e sudo nixos-rebuild switch --flake .#system'
+	['Nix rebuild bix']='alacritty --working-directory nix --title floating --hold -e sudo nixos-rebuild switch --flake .#bix'
 	['open Nix in terminal']='alacritty --working-directory nix --title floating'
 	['volume off']='amixer set Master 0%'
 	['volume set low']='amixer set Master 25%'

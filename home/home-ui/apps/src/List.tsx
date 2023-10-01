@@ -2,14 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   underscoresForKeys,
   useCreateOrSelectWorkspace,
-  useGetActiveTodos,
-  useGetCouldDo,
   useGetCreatedAtTimestamps,
-  useGetCreatedAtTimestams,
   useGetWorkspaceTree,
 } from "./hooks";
 import TimeAgo from "react-timeago";
-import { CheckSquare, SquareIcon } from "lucide-react";
+import { Todos } from "./Todos";
 
 function List() {
   const { workspaces, getWorkspaceTree } = useGetWorkspaceTree();
@@ -39,14 +36,14 @@ function List() {
     entries = workspaces.filter((w) => w.name.includes(input));
   }
 
-  // const tasks = entries.filter((w) => w.name.includes("task:"));
-  // const nontasks = entries.filter((w) => !w.name.includes("task:"));
-  //
-  // entries = [...tasks, ...nontasks];
-
   return (
     <div className="bg-gruvbox-background text-gruvbox-foreground h-screen w-full overflow-auto flex">
-      <div className="grow">
+      <div
+        className="grow"
+        onMouseEnter={() => {
+          inputRef.current!.focus();
+        }}
+      >
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -63,7 +60,8 @@ function List() {
           <input
             ref={inputRef}
             type="text"
-            className="bg-gruvbox-dark0 py-2 px-3 w-full focus:outline-none"
+            className="bg-gruvbox-dark0 placeholder:text-gruvbox-dark3 py-2 px-3 w-full focus:outline-none"
+            placeholder="Workspace"
             value={input}
             onChange={(e) => {
               setInput(e.currentTarget.value);
@@ -97,7 +95,18 @@ function List() {
         </div>
       </div>
       <div className="w-[420px]">
-        <Todos />
+        <div className="border-l-2  border-gruvbox-dark0 h-full flex flex-col overflow-hidden">
+          <Todos
+            title="to do"
+            location="~/obsidian/todo/Active\ todo.md"
+            watchMessage="active_todos_updated"
+          />
+          <Todos
+            title="could do"
+            location="~/obsidian/todo/System\ ideas.md"
+            watchMessage="system_ideas_updated"
+          />
+        </div>
       </div>
     </div>
   );
@@ -125,81 +134,5 @@ function FormatTask({
     </div>
   ) : (
     name
-  );
-}
-
-function Todos() {
-  const { activeTodos, getActiveTodos } = useGetActiveTodos();
-  const { couldDo, getCouldDo } = useGetCouldDo();
-  const createOrSelectWorkspace = useCreateOrSelectWorkspace();
-
-  useEffect(() => {
-    const handleFocus = () => {
-      getActiveTodos();
-      getCouldDo();
-    };
-    window.addEventListener("focus", handleFocus);
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-    };
-  });
-
-  return (
-    <div className="border-l-2  border-gruvbox-dark0 h-full flex flex-col overflow-hidden">
-      <div className="h-1/2 overflow-auto">
-        <div className="px-3 py-2 border-b-2 border-t-2 border-gruvbox-dark0 text-gruvbox-light2 uppercase text-sm">
-          To do
-        </div>
-        <div>
-          {activeTodos.map((t) =>
-            t.length > 0 ? (
-              <div
-                key={t}
-                className="flex text-sm border-b-2 border-b-gruvbox-dark0 text-gruvbox-light2 hover:bg-gruvbox-dark1"
-              >
-                <button
-                  className="grow text-left px-3 py-2"
-                  onClick={() => {
-                    createOrSelectWorkspace("task:" + t);
-                  }}
-                >
-                  {t}
-                </button>
-                <button className="px-3 hover:bg-gruvbox-dark0 cursor-pointer">
-                  <SquareIcon size={13} />
-                </button>
-              </div>
-            ) : null
-          )}
-        </div>
-      </div>
-      <div className="h-1/2 overflow-auto">
-        <div className="px-3 py-2 border-b-2 border-t-2 border-gruvbox-dark0 text-gruvbox-light2 uppercase text-sm">
-          Could do
-        </div>
-        <div>
-          {couldDo.map((t) =>
-            t.length > 0 ? (
-              <div
-                key={t}
-                className="flex border-b-2 text-sm border-b-gruvbox-dark0 text-gruvbox-light2 hover:bg-gruvbox-dark1"
-              >
-                <button
-                  className="grow text-left px-3 py-2"
-                  onClick={() => {
-                    createOrSelectWorkspace("task:" + t);
-                  }}
-                >
-                  {t}
-                </button>
-                <button className="px-3 hover:bg-gruvbox-dark0 cursor-pointer">
-                  <SquareIcon size={13} />
-                </button>
-              </div>
-            ) : null
-          )}
-        </div>
-      </div>
-    </div>
   );
 }
