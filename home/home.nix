@@ -82,11 +82,13 @@
     lf
     brotab
     fzf
+    xdotool
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
     (writeShellScriptBin "system_menu" (builtins.readFile ./scripts/system_menu))
     (writeShellScriptBin "fzf_system_menu" (builtins.readFile ./scripts/fzf_system_menu))
+    (writeShellScriptBin "fzf_app_menu" (builtins.readFile ./scripts/fzf_app_menu))
     (writeShellScriptBin "workspace_switcher" (builtins.readFile ./scripts/workspace_switcher))
     (writeShellScriptBin "waybar_reload" (builtins.readFile ./scripts/waybar_reload))
     (writeShellScriptBin "rofi_keybinds" (builtins.readFile ./scripts/rofi_keybinds))

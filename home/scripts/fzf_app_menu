@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Declare the associative array with option strings as keys and commands as values
+declare -A options=(
+	['new term']=''
+	['new browser']='google-chrome-stable'
+)
+
+option_names_raw=$(printf '%s^' "${!options[@]}")
+
+# Use Rofi in dmenu mode and read user choice
+choice=$(echo "$option_names_raw" | fzf --layout reverse)
+
+# Execute the chosen command
+if [[ -n "${options[$choice]}" ]]; then
+	eval ${options[$choice]}
+else
+	echo "Invalid choice."
+fi

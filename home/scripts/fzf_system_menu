@@ -93,7 +93,7 @@ sorted+=("${remaining[@]}")
 sorted_names_raw=$(printf '%s\n' "${sorted[@]}")
 
 # Use Rofi in dmenu mode and read user choice
-choice=$(echo "$sorted_names_raw" | fzf)
+choice=$(echo "$sorted_names_raw" | fzf --layout reverse)
 
 # Execute the chosen command
 if [[ -n "${options[$choice]}" ]]; then
