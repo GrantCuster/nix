@@ -20,4 +20,6 @@ end
 
 map("i", "jk", "<Esc>", { desc = "Escape", remap = true })
 map("n", "U", "<C-r>")
+map("n", "U", "<C-r>")
+map("n", "<leader>z", ":TZAtaraxis<CR>", {})
 

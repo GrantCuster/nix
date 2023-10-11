@@ -1,0 +1,104 @@
+#!/bin/bash
+#
+# Declare the associative array with option strings as keys and commands as values
+declare -A options=(
+	['workspaces']='workspace_switcher'
+	['all scripts and programs']='rofi -combi-modi run,drun -show combi'
+	['keybinds']='rofi_keybinds'
+	['obsidian']='obsidian'
+	['chrome']='google-chrome-stable'
+	['dev']='alacritty --working-directory dev'
+	['edit Neovim config']='alacritty --title floating --working-directory nix/home/nvim -e nvim .'
+	['edit Hyprland config']='alacritty --title floating --working-directory nix/home/hyprland -e nvim .'
+	['edit Nix config']='alacritty --title floating --working-directory nix -e nvim .'
+	['restart Waybar']='waybar_reload'
+	['manage Bluetooth']='blueman-manager'
+	['back to last workspacel']='back_to_workspace'
+	['brightness set bright']='brightnessctl set 100%'
+	['brightness set medium']='brightnessctl set 50%'
+	['brightness set dark']='brightnessctl set 25%'
+	['brightness set darkest']='brightnessctl set 10%'
+	['Nix rebuild home']='alacritty --working-directory nix --title floating --hold -e home-manager switch --flake .#home'
+	['Nix rebuild bix']='alacritty --working-directory nix --title floating --hold -e sudo nixos-rebuild switch --flake .#bix'
+	['open Nix in terminal']='alacritty --working-directory nix --title floating'
+	['volume off']='amixer set Master 0%'
+	['volume set low']='amixer set Master 25%'
+	['volume set medium']='amixer set Master 50%'
+	['volume set high']='amixer set Master 75%'
+	['volume set full']='amixer set Master 100%'
+	['restart workspace timer']='restart_current_workspace_timer'
+	['turn off workspace timer']='clear_current_workspace_timer'
+	['rename workspace']='alacritty --title floating -e rename_workspace'
+	['screenshot monitor']='hyprshot -m output -o /home/grant/screenshots/'
+	['screenshot window']='hyprshot -m window -o /home/grant/screenshots/'
+	['screenshot region']='hyprshot -m region -o /home/grant/screenshots/'
+	['record monitor']="wf-recorder -f /home/grant/screenrecordings/$(date +'%Y-%m-%d-%H%M%S_recording.mp4')"
+	['record region']="record_region"
+	['record window']="record_window"
+	['thunar']='thunar'
+	['spotify']='spotify'
+	['reboot']='reboot'
+	['switch to external monitor']="hyprctl keyword monitor DP-3,preferred,0x0,auto; hyprctl keyword monitor \"eDP-1, disable\"; go_home_space"
+	['switch to laptop monitor']="hyprctl keyword monitor eDP-1,preferred,0x0,auto; hyprctl keyword monitor \"DP-3, disable\"; go_home_space"
+	['restart home']="restart_home"
+	['resize 80% height']="sleep 0.1 && resize_window_percent 0.8"
+	['resize 50% height']="sleep 0.1 && resize_window_percent 0.5"
+	['sleep']="systemctl suspend"
+	['workspace text']="google-chrome-stable --app=http://localhost:6051/text"
+	['position home bar']="position_home_bar"
+	['make gif from recording']="last_recording_to_gif"
+	['make wide gif from recording']="last_recording_to_gif 1200"
+	['restart libinput gestures']="restart_libinput_gestures"
+)
+
+# Get bookmark choices and add them to the options array
+bookmarks_file="${HOME}/.config/google-chrome/Default/Bookmarks"
+# Newline was not working as a delimiter, this may not work in all situations
+bookmark_names=$(jq -r '.roots | .bookmark_bar.children | map(.name) | join("^")' "$bookmarks_file")
+bookmark_urls=$(jq -r '.roots | .bookmark_bar.children | map(.url) | join("^")' "$bookmarks_file")
+
+# Loop through the bookmark names and add them to the options array with their respective URLs
+IFS='^' read -ra bookmark_names_array <<<"$bookmark_names"
+IFS='^' read -ra bookmark_urls_array <<<"$bookmark_urls"
+for ((i = 0; i < ${#bookmark_names_array[@]}; i++)); do
+	options["${bookmark_names_array[i]}"]="use_browser ${bookmark_urls_array[i]}"
+done
+
+option_names_raw=$(printf '%s^' "${!options[@]}")
+history_file="/tmp/system_menu_history"
+IFS=$'^' read -r -d '' -a option_names <<<"$option_names_raw"
+
+mapfile -t history <"$history_file"
+
+# Initialize arrays for sorted items and remaining items
+sorted=()
+
+# if item is in history use history position
+for item in "${history[@]}"; do
+	if [[ " ${option_names[*]} " == *" $item "* ]]; then
+		sorted+=("$item")
+	fi
+done
+
+# after history sort add any remaing
+for item in "${option_names[@]}"; do
+	if [[ " ${history[*]} " != *" $item "* ]]; then
+		sorted+=("$item")
+	fi
+done
+
+# Concatenate the sorted list with the remaining items
+sorted+=("${remaining[@]}")
+
+sorted_names_raw=$(printf '%s\n' "${sorted[@]}")
+
+# Use Rofi in dmenu mode and read user choice
+choice=$(echo "$sorted_names_raw" | fzf)
+
+# Execute the chosen command
+if [[ -n "${options[$choice]}" ]]; then
+	save_history "/tmp/system_menu_history" "$choice"
+	eval ${options[$choice]}
+else
+	echo "Invalid choice."
+fi
