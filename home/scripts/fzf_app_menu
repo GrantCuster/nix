@@ -1,19 +1,66 @@
 #!/bin/bash
-#
-# Declare the associative array with option strings as keys and commands as values
+
 declare -A options=(
-	['new term']=''
+	['new term']='clear && zsh'
 	['new browser']='google-chrome-stable'
 )
 
-option_names_raw=$(printf '%s^' "${!options[@]}")
+option_names_raw="new term
+new browser"
 
-# Use Rofi in dmenu mode and read user choice
-choice=$(echo "$option_names_raw" | fzf --layout reverse)
+tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}')
+
+minimized_options=$(hyprctl clients -j | jq -r 'reverse' | jq -r '.[] | select(.workspace.name | startswith("special")) | "(\(.class)) \(.title)"')
+
+choice=$(echo "$option_names_raw
+$tmux_sessions
+$minimized_options" | fzf --layout reverse)
 
 # Execute the chosen command
-if [[ -n "${options[$choice]}" ]]; then
+if [[ "$choice" == "" ]]; then
+	originalAddress=$(hyprctl activewindow -j | jq -r .address)
+	hyprctl dispatch closewindow "address:$originalAddress"
+elif [[ -n "${options[$choice]}" ]]; then
 	eval ${options[$choice]}
+	# TODO better way to check
+elif [[ "$tmux_sessions" == *"$choice"* ]]; then
+	index=0
+	found=false
+	while IFS= read -r line; do
+		((index++))
+		if [[ "$line" == "$choice" ]]; then
+			found=true
+			break
+		fi
+	done <<<"$tmux_sessions"
+	session=$(tmux list-sessions | sed -E 's/:.*$//' | sed -n "${index}p")
+	tmux attach -t "$session"
+elif [[ "$minimized_options" == *"$choice"* ]]; then
+	index=0
+	found=false
+	while IFS= read -r line; do
+		((index++))
+		if [[ "$line" == "$choice" ]]; then
+			found=true
+			break
+		fi
+	done <<<"$minimized_options"
+	address=$(hyprctl clients -j | jq -r 'reverse' | jq -r '.[] | select(.workspace.name | startswith("special")) | .address' | sed -n "${index}p")
+
+	workspace=$(hyprctl activeworkspace -j | jq -r .id)
+	size=$(hyprctl activewindow -j | jq -r '.size | "\(.[0]) \(.[1])"')
+
+	originalAddress=$(hyprctl activewindow -j | jq -r .address)
+
+	activewindow=$(hyprctl activewindow -j)
+	targetX=$(echo "$activewindow" | jq -r '"\(.at.[0] + .size.[0] * 0.5|round)"')
+	targetY=$(echo "$activewindow" | jq -r '"\(.at.[1] + .size.[1] * 0.5|round)"')
+	targetW=$(echo "$activewindow" | jq -r '"\(.size.[0] * 0.5|round)"')
+	targetH=$(echo "$activewindow" | jq -r '"\(.size.[1] * 0.5|round)"')
+	finalTargetX=$((targetX + targetQuarterW + 8))
+	finalTargetY=$((targetY + targetQuarterH + 8))
+
+	hyprctl --batch "dispatch togglespecialworkspace \"$address\" ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace \"$address\" ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress"
 else
 	echo "Invalid choice."
 fi

@@ -1,20 +1,12 @@
 {
   // "layer": "top", // Waybar at top layer
   // "position": "bottom", // Waybar position (top|bottom|left|right)
-  "height": 26, // Waybar height (to be removed for auto height)
+  "height": 28, // Waybar height (to be removed for auto height)
   // "width": 1280, // Waybar width
   "spacing": 0, // Gaps between modules (4px)
   // Choose the order of the modules
-  // "modules-left": [
-  //   "wlr/workspaces"
-  // ],
-  // "modules-right": [
-  //   "backlight",
-  //   "pulseaudio",
-  //   "battery",
-  //   "clock",
-  //   "custom/workspace_timer"
-  // ],
+  "modules-left": ["custom/strategy"],
+  "modules-right": ["custom/extra", "battery", "clock"],
   // Modules configuration
   "wlr/workspaces": {
     "active-only": true
@@ -34,10 +26,7 @@
   "sway/scratchpad": {
     "format": "{icon} {count}",
     "show-empty": false,
-    "format-icons": [
-      "",
-      ""
-    ],
+    "format-icons": ["", ""],
     "tooltip": true,
     "tooltip-format": "{app}: {title}"
   },
@@ -96,11 +85,7 @@
     "critical-threshold": 80,
     // "format-critical": "{temperatureC}°C {icon}",
     "format": "{temperatureC}°C {icon}",
-    "format-icons": [
-      "",
-      "",
-      ""
-    ]
+    "format-icons": ["", "", ""]
   },
   "backlight": {
     // "device": "acpi_video1",
@@ -112,19 +97,13 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "B:{capacity}%",
-    "format-charging": "C:{capacity}%",
-    "format-plugged": "C:{capacity}%",
-    "format-alt": "B:{time}",
+    "format": "{capacity}%",
+    "format-charging": "{capacity}%",
+    "format-plugged": "{capacity}%",
+    "format-alt": "{time}",
     // "format-good": "", // An empty format will hide the module
     // "format-full": "",
-    "format-icons": [
-      "",
-      "",
-      "",
-      "",
-      ""
-    ]
+    "format-icons": ["", "", "", "", ""]
   },
   "battery#bat2": {
     "bat": "BAT2"
@@ -140,7 +119,6 @@
   },
   "pulseaudio": {
     // "scroll-step": 1, // %, can be a float
-    "format": "V:{volume}%",
     "format-bluetooth": "BV:{format_source} {volume}% ",
     "format-bluetooth-muted": " {icon} {format_source}",
     "format-muted": " {format_source}",
@@ -149,15 +127,12 @@
     "format-icons": {
       "headphone": "",
       "hands-free": "",
+      "format": "V:{volume}%",
       "headset": "",
       "phone": "",
       "portable": "",
       "car": "",
-      "default": [
-        "",
-        "",
-        ""
-      ]
+      "default": ["", "", ""]
     },
     "on-click": "pavucontrol"
   },
@@ -176,5 +151,33 @@
   "custom/workspace_timer": {
     "exec": "$HOME/.nix-profile/bin/get_current_workspace_time",
     "interval": 1
+  },
+  "custom/date": {
+    "exec": "$HOME/.config/waybar/date",
+    "interval": 1
+  },
+  "custom/strategy": {
+    "interval": "once",
+    "exec": "$HOME/.config/waybar/strategy",
+    "on-click": "",
+    "tooltip": false,
+    "escape": true,
+    "signal": 8
+  },
+  "custom/extra": {
+    "interval": "once",
+    "exec": "$HOME/.config/waybar/extra",
+    "on-click": "",
+    "tooltip": false,
+    "escape": true,
+    "signal": 9
+  },
+  "custom/pin": {
+    "interval": "once",
+    "exec": "$HOME/.config/waybar/pin",
+    "on-click": "",
+    "tooltip": false,
+    "escape": true,
+    "signal": 10
   }
 }

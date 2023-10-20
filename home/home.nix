@@ -83,6 +83,8 @@
     brotab
     fzf
     xdotool
+    htop
+    btop
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
@@ -125,6 +127,8 @@
     (writeShellScriptBin "back_one_recent" (builtins.readFile ./scripts/back_one_recent))
     (writeShellScriptBin "forward_one_recent" (builtins.readFile ./scripts/forward_one_recent))
     (writeShellScriptBin "set_workspace_created_at" (builtins.readFile ./scripts/set_workspace_created_at))
+    (writeShellScriptBin "minimize" (builtins.readFile ./scripts/minimize))
+    (writeShellScriptBin "pin" (builtins.readFile ./scripts/pin))
   ];
 
   home.sessionVariables = {

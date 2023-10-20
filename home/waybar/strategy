@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Specify the path to the file containing Oblique Strategies.
+STRATEGIES_FILE="$HOME/.config/waybar/strategies.txt"
+
+# Check if the file exists.
+if [ ! -f "$STRATEGIES_FILE" ]; then
+  echo "Error: Oblique Strategies file not found."
+  exit 1
+fi
+
+# Count the number of strategies in the file.
+STRATEGY_COUNT=$(wc -l < "$STRATEGIES_FILE")
+
+# Generate a random line number.
+RANDOM_LINE_NUMBER=$((RANDOM % STRATEGY_COUNT + 1))
+
+# Retrieve and print the random Oblique Strategy.
+RANDOM_STRATEGY=$(sed -n "${RANDOM_LINE_NUMBER}p" "$STRATEGIES_FILE")
+echo "$RANDOM_STRATEGY"

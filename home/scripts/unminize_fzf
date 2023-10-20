@@ -1,0 +1,18 @@
+#!/bin/bash
+
+index=$(hyprctl clients -j | jq -r '.[] | select(.workspace.name | startswith("special")) | "(\(.class)) \(.title)"' | cat -n | fzf --with-nth 2.. | awk '{print $1}')
+
+pid=$(hyprctl clients -j | jq -r '.[] | select(.workspace.name | startswith("special")) | .pid' | sed -n "${index}p")
+
+workspace=$(hyprctl activeworkspace -j | jq -r .id)
+size=$(hyprctl activewindow -j | jq -r '.size | "\(.[0]) \(.[1])"')
+
+activewindow=$(hyprctl activewindow -j)
+targetX=$(echo "$activewindow" | jq -r '"\(.at.[0] + .size.[0] * 0.5|round)"')
+targetY=$(echo "$activewindow" | jq -r '"\(.at.[1] + .size.[1] * 0.5|round)"')
+targetW=$(echo "$activewindow" | jq -r '"\(.size.[0] * 0.5|round)"')
+targetH=$(echo "$activewindow" | jq -r '"\(.size.[1] * 0.5|round)"')
+finalTargetX=$((targetX + targetQuarterW + 8))
+finalTargetY=$((targetY + targetQuarterH + 8))
+
+hyprctl --batch "dispatch togglespecialworkspace $pid ; dispatch movetoworkspace $workspace ; dispatch togglefloating pid:$pid ; dispatch resizewindowpixel exact $targetW $targetH,pid:$pid ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $pid ; dispatch togglefloating pid:$pid"

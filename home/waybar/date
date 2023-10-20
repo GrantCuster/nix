@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Get the current date
+current_date=$(date +"%A, %B %d, %Y")
+
+# Get the day of the month
+day=$(date +"%d")
+
+# Add "th" to the day part
+case $day in
+    1[0-9]) day="${day}th";;
+    *1) day="${day}st";;
+    *2) day="${day}nd";;
+    *3) day="${day}rd";;
+    *) day="${day}th";;
+esac
+
+# Replace the day part in the date and remove the extra comma
+current_date="${current_date/ [0-9][0-9]/ $day}"
+
+# Print the formatted date
+echo "$current_date"
