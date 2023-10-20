@@ -5,7 +5,7 @@
   // "width": 1280, // Waybar width
   "spacing": 0, // Gaps between modules (4px)
   // Choose the order of the modules
-  "modules-left": ["custom/strategy"],
+  "modules-left": ["custom/pin"],
   "modules-right": ["custom/extra", "battery", "clock"],
   // Modules configuration
   "wlr/workspaces": {
@@ -174,7 +174,7 @@
   },
   "custom/pin": {
     "interval": "once",
-    "exec": "$HOME/.config/waybar/pin",
+    "exec": "cat $HOME/.config/waybar/pinned.txt",
     "on-click": "",
     "tooltip": false,
     "escape": true,
