@@ -1,1 +1,1 @@
-write script for switching windows
+write script to switch back to last window

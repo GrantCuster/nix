@@ -60,7 +60,7 @@ elif [[ "$minimized_options" == *"$choice"* ]]; then
 	finalTargetX=$((targetX + targetQuarterW + 8))
 	finalTargetY=$((targetY + targetQuarterH + 8))
 
-	hyprctl --batch "dispatch togglespecialworkspace \"$address\" ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace \"$address\" ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress"
+	hyprctl --batch "dispatch togglespecialworkspace $address ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $address ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress"
 else
 	echo "Invalid choice."
 fi

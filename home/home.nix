@@ -129,7 +129,7 @@
     (writeShellScriptBin "set_workspace_created_at" (builtins.readFile ./scripts/set_workspace_created_at))
     (writeShellScriptBin "minimize" (builtins.readFile ./scripts/minimize))
     (writeShellScriptBin "pin" (builtins.readFile ./scripts/pin))
-    (writeShellScriptBin "switch" (builtins.readFile ./scripts/switch))
+    (writeShellScriptBin "switch_window" (builtins.readFile ./scripts/switch_window))
   ];
 
   home.sessionVariables = {

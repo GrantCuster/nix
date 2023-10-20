@@ -1,6 +1,6 @@
 #!/bin/bash
 
-address=$(hyprctl activewindow -j | jq ".address")
+address=$(hyprctl activewindow -j | jq -r .address)
 
 hyprctl dispatch moveoutofgroup
 hyprctl dispatch movetoworkspacesilent special:$address
