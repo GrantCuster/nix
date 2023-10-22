@@ -1,23 +1,5 @@
 #!/bin/bash
 
-get_lists() {
-	declare -A options=(
-		['new term']='clear && zsh'
-		['new browser']='google-chrome-stable'
-	)
-
-	option_names_raw="new term
-new browser"
-
-	tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}')
-
-	minimized_options=$(hyprctl clients -j | jq -r 'reverse' | jq -r '.[] | select(.workspace.name | startswith("special")) | "(\(.class)) \(.title)"')
-
-	echo "$option_names_raw
-$tmux_sessions
-$minimized_options"
-}
-
 execute_choice() {
 	choice="$1"
 
@@ -84,4 +66,4 @@ execute_choice() {
 	fi
 }
 
-execute_choice "$(get_lists | fzf --layout reverse)"
+execute_choice "$(fzf_get_app_list | fzf --bind 'ctrl-r:reload(fzf_get_app_list)' --layout reverse)"

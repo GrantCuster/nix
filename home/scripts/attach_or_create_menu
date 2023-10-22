@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tmux attach-session -t menu || tmux new-session -s menu
