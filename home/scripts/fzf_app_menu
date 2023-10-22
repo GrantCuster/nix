@@ -4,11 +4,11 @@ execute_choice() {
 	choice="$1"
 
 	declare -A options=(
-		['new term']='clear && zsh'
+		['default term']='tmux switch-client -t default || tmux new-session -s default && restart_fzf_menu'
 		['new browser']='google-chrome-stable'
 	)
 
-	option_names_raw="new term
+	option_names_raw="default term
   new browser"
 
 	tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}')
@@ -19,9 +19,11 @@ execute_choice() {
 	if [[ "$choice" == "" ]]; then
 		originalAddress=$(hyprctl activewindow -j | jq -r .address)
 		hyprctl dispatch closewindow "address:$originalAddress"
+		restart_fzf_menu
 	elif [[ -n "${options[$choice]}" ]]; then
 		eval ${options[$choice]}
 		# TODO better way to check
+		restart_fzf_menu
 	elif [[ "$tmux_sessions" == *"$choice"* ]]; then
 		index=0
 		found=false
@@ -34,7 +36,7 @@ execute_choice() {
 		done <<<"$tmux_sessions"
 		session=$(tmux list-sessions | sed -E 's/:.*$//' | sed -n "${index}p")
 		tmux switch-client -t "$session"
-		tmux send-keys -t menu "fzf_app_menu" Enter
+		restart_fzf_menu
 	elif [[ "$minimized_options" == *"$choice"* ]]; then
 		index=0
 		found=false
@@ -61,6 +63,7 @@ execute_choice() {
 		finalTargetY=$((targetY + targetQuarterH + 8))
 
 		hyprctl --batch "dispatch togglespecialworkspace $address ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $address ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress"
+		restart_fzf_menu
 	else
 		echo "Invalid choice."
 	fi

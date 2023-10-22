@@ -1,11 +1,6 @@
 #!/bin/bash
 
-declare -A options=(
-  ['new term']='clear && zsh'
-  ['new browser']='google-chrome-stable'
-)
-
-option_names_raw="new term
+option_names_raw="default term
 new browser"
 
 tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}')

@@ -1,1 +1,1 @@
-mod return open menu session
+switch new term to default tmux session

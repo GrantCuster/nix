@@ -1,0 +1,3 @@
+#!/bin/bash
+
+tmux send-keys -t menu "fzf_app_menu" Enter

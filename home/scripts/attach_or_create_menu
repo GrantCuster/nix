@@ -1,3 +1,4 @@
 #!/bin/bash
 
+# TODO should start fzf_app_menu if new session
 tmux attach-session -t menu || tmux new-session -s menu

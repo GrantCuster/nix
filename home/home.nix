@@ -132,6 +132,7 @@
     (writeShellScriptBin "switch_window" (builtins.readFile ./scripts/switch_window))
     (writeShellScriptBin "fzf_get_app_list" (builtins.readFile ./scripts/fzf_get_app_list))
     (writeShellScriptBin "attach_or_create_menu" (builtins.readFile ./scripts/attach_or_create_menu))
+    (writeShellScriptBin "restart_fzf_menu" (builtins.readFile ./scripts/restart_fzf_menu))
   ];
 
   home.sessionVariables = {
