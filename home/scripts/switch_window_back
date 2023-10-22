@@ -1,0 +1,22 @@
+#!/bin/bash
+location="/tmp/window_switch_last"
+
+originalAddress=$(hyprctl activewindow -j | jq -r .address)
+activewindow=$(hyprctl activewindow -j)
+address=$(cat "$location")
+
+# place in history
+if [[ ! -f "$location" ]]; then
+	touch "$location"
+fi
+echo "$originalAddress" >"$location"
+
+targetX=$(echo "$activewindow" | jq -r '"\(.at.[0] + .size.[0] * 0.5|round)"')
+targetY=$(echo "$activewindow" | jq -r '"\(.at.[1] + .size.[1] * 0.5|round)"')
+targetW=$(echo "$activewindow" | jq -r '"\(.size.[0] * 0.5|round)"')
+targetH=$(echo "$activewindow" | jq -r '"\(.size.[1] * 0.5|round)"')
+finalTargetX=$((targetX + targetQuarterW + 8))
+finalTargetY=$((targetY + targetQuarterH + 8))
+
+hyprctl --batch "dispatch togglespecialworkspace $address ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $address ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress" &
+sleep 0.1 && hyprctl dispatch movetoworkspacesilent special:$address,address:$address

@@ -134,6 +134,7 @@
     (writeShellScriptBin "attach_or_create_menu" (builtins.readFile ./scripts/attach_or_create_menu))
     (writeShellScriptBin "restart_fzf_menu" (builtins.readFile ./scripts/restart_fzf_menu))
     (writeShellScriptBin "smart_minimize" (builtins.readFile ./scripts/smart_minimize))
+    (writeShellScriptBin "switch_window_back" (builtins.readFile ./scripts/switch_window_back))
   ];
 
   home.sessionVariables = {
