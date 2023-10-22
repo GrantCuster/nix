@@ -1,0 +1,9 @@
+#!/bin/bash
+
+class=$(hyprctl activewindow -j | jq -r .class)
+
+if [[ "$class" == "Alacritty" ]]; then
+  hyprctl dispatch killactive
+else
+  minimize
+fi

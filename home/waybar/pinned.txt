@@ -1,1 +1,2 @@
-switch new term to default tmux session
+send refresh when we minimize
+

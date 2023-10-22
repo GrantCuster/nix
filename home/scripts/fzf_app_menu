@@ -4,8 +4,8 @@ execute_choice() {
 	choice="$1"
 
 	declare -A options=(
-		['default term']='tmux switch-client -t default || tmux new-session -s default && restart_fzf_menu'
-		['new browser']='google-chrome-stable'
+		['default term']='tmux switch-client -t default || tmux new-session -s default'
+		['default browser']='nohup google-chrome-stable &'
 	)
 
 	option_names_raw="default term
@@ -15,14 +15,18 @@ execute_choice() {
 
 	minimized_options=$(hyprctl clients -j | jq -r 'reverse' | jq -r '.[] | select(.workspace.name | startswith("special")) | "(\(.class)) \(.title)"')
 
+	originalAddress=$(hyprctl activewindow -j | jq -r .address)
+
 	# Execute the chosen command
 	if [[ "$choice" == "" ]]; then
-		originalAddress=$(hyprctl activewindow -j | jq -r .address)
 		hyprctl dispatch closewindow "address:$originalAddress"
 		restart_fzf_menu
 	elif [[ -n "${options[$choice]}" ]]; then
+		originalAddress=$(hyprctl activewindow -j | jq -r .address)
 		eval ${options[$choice]}
-		# TODO better way to check
+		if [[ "$choice" == "new browser" ]]; then
+			sleep 0.3 && hyprctl dispatch closewindow "address:$originalAddress"
+		fi
 		restart_fzf_menu
 	elif [[ "$tmux_sessions" == *"$choice"* ]]; then
 		index=0

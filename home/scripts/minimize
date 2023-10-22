@@ -2,5 +2,5 @@
 
 address=$(hyprctl activewindow -j | jq -r .address)
 
-hyprctl dispatch moveoutofgroup
 hyprctl dispatch movetoworkspacesilent special:$address
+tmux send-keys -t menu C-r

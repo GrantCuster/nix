@@ -133,6 +133,7 @@
     (writeShellScriptBin "fzf_get_app_list" (builtins.readFile ./scripts/fzf_get_app_list))
     (writeShellScriptBin "attach_or_create_menu" (builtins.readFile ./scripts/attach_or_create_menu))
     (writeShellScriptBin "restart_fzf_menu" (builtins.readFile ./scripts/restart_fzf_menu))
+    (writeShellScriptBin "smart_minimize" (builtins.readFile ./scripts/smart_minimize))
   ];
 
   home.sessionVariables = {

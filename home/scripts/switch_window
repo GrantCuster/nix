@@ -2,13 +2,12 @@
 
 address=$(hyprctl activewindow -j | jq -r .address)
 
+# place in history
 location="/tmp/window_switch_last"
 if [[ ! -f "$location" ]]; then
 	touch "$location"
 fi
-
-# Add the string to the start of the file
 echo "$address" >"$location"
 
-alacritty --hold -e "sleep 0.2 && fzf_app_menu" &
+alacritty --hold -e attach_or_create_menu &
 sleep 0.1 && hyprctl dispatch movetoworkspacesilent special:$address,address:$address
