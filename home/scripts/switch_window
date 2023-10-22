@@ -10,5 +10,5 @@ fi
 # Add the string to the start of the file
 echo "$address" >"$location"
 
-alacritty --hold -e fzf_app_menu &
+alacritty --hold -e "sleep 0.2 && fzf_app_menu" &
 sleep 0.1 && hyprctl dispatch movetoworkspacesilent special:$address,address:$address

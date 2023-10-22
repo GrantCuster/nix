@@ -1,1 +1,1 @@
-write script to switch back to last window
+get menu refresh working

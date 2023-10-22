@@ -130,6 +130,7 @@
     (writeShellScriptBin "minimize" (builtins.readFile ./scripts/minimize))
     (writeShellScriptBin "pin" (builtins.readFile ./scripts/pin))
     (writeShellScriptBin "switch_window" (builtins.readFile ./scripts/switch_window))
+    (writeShellScriptBin "fzf_get_app_list" (builtins.readFile ./scripts/fzf_get_app_list))
   ];
 
   home.sessionVariables = {
