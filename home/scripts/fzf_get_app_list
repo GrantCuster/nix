@@ -3,7 +3,7 @@
 option_names_raw="default term
 new browser"
 
-tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}')
+tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}' | grep -v -e "(tmux) menu" -e "(tmux) default")
 
 minimized_options=$(hyprctl clients -j | jq -r 'reverse' | jq -r '.[] | select(.workspace.name | startswith("special")) | "(\(.class)) \(.title)"')
 

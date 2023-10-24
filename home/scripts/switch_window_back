@@ -3,20 +3,39 @@ location="/tmp/window_switch_last"
 
 originalAddress=$(hyprctl activewindow -j | jq -r .address)
 activewindow=$(hyprctl activewindow -j)
-address=$(cat "$location")
+tmux_or_address=$(cat "$location")
+class=$(hyprctl activewindow -j | jq -r .class)
+title=$(hyprctl activewindow -j | jq -r .title)
 
-# place in history
 if [[ ! -f "$location" ]]; then
 	touch "$location"
 fi
-echo "$originalAddress" >"$location"
 
-targetX=$(echo "$activewindow" | jq -r '"\(.at.[0] + .size.[0] * 0.5|round)"')
-targetY=$(echo "$activewindow" | jq -r '"\(.at.[1] + .size.[1] * 0.5|round)"')
-targetW=$(echo "$activewindow" | jq -r '"\(.size.[0] * 0.5|round)"')
-targetH=$(echo "$activewindow" | jq -r '"\(.size.[1] * 0.5|round)"')
-finalTargetX=$((targetX + targetQuarterW + 8))
-finalTargetY=$((targetY + targetQuarterH + 8))
-
-hyprctl --batch "dispatch togglespecialworkspace $address ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $address ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress" &
-sleep 0.1 && hyprctl dispatch movetoworkspacesilent special:$address,address:$address
+if [[ $tmux_or_address == tmux:* ]]; then
+	session=$(echo "$tmux_or_address" | cut -d':' -f2-)
+	if [[ "$class" == "Alacritty" ]]; then
+		echo "$title" >"$location"
+		tmux switch-client -t "$session"
+	else
+		echo "$originalAddress" >"$location"
+		alacritty --hold -e tmux attach -t "$session" &
+		sleep 0.1 && hyprctl dispatch movetoworkspacesilent special:$originalAddress,address:$originalAddress
+	fi
+else
+	address="$tmux_or_address"
+	workspace=$(hyprctl activeworkspace -j | jq -r .id)
+	targetX=$(echo "$activewindow" | jq -r '"\(.at.[0] + .size.[0] * 0.5|round)"')
+	targetY=$(echo "$activewindow" | jq -r '"\(.at.[1] + .size.[1] * 0.5|round)"')
+	targetW=$(echo "$activewindow" | jq -r '"\(.size.[0] * 0.5|round)"')
+	targetH=$(echo "$activewindow" | jq -r '"\(.size.[1] * 0.5|round)"')
+	finalTargetX=$((targetX + 8))
+	finalTargetY=$((targetY + 8))
+	hyprctl --batch "dispatch togglespecialworkspace $address ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $address ; dispatch togglefloating address:$address"
+	if [[ "$class" == "Alacritty" ]]; then
+		echo "$title" >"$location"
+		hyprctl dispatch closewindow address:$originalAddress
+	else
+		echo "$originalAddress" >"$location"
+		sleep 0.1 && hyprctl dispatch movetoworkspacesilent special:$originalAddress,address:$originalAddress
+	fi
+fi

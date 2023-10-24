@@ -1,7 +1,7 @@
 #!/bin/bash
 
 address=$(hyprctl activewindow -j | jq -r .address)
-class=$(hyprctl activewindow -j | jq -r .class)
+title=$(hyprctl activewindow -j | jq -r .title)
 
 # place in history
 location="/tmp/window_switch_last"
@@ -15,6 +15,6 @@ if [[ $title == tmux:* ]]; then
 	tmux switch-client -t menu
 else
 	echo "$address" >"$location"
-	alacritty --hold -e attach_or_create_menu
+	alacritty --hold -e attach_or_create_menu &
 	sleep 0.1 && hyprctl dispatch movetoworkspacesilent special:$address,address:$address
 fi

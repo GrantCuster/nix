@@ -11,7 +11,7 @@ execute_choice() {
 	option_names_raw="default term
   new browser"
 
-	tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}')
+	tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}' | grep -v -e "(tmux) menu" -e "(tmux) default")
 
 	minimized_options=$(hyprctl clients -j | jq -r 'reverse' | jq -r '.[] | select(.workspace.name | startswith("special")) | "(\(.class)) \(.title)"')
 
@@ -38,7 +38,8 @@ execute_choice() {
 				break
 			fi
 		done <<<"$tmux_sessions"
-		session=$(tmux list-sessions | sed -E 's/:.*$//' | sed -n "${index}p")
+		entry=$(echo "$tmux_sessions" | sed -n "${index}p")
+		session=$(echo "$entry" | sed 's/(tmux) //g')
 		tmux switch-client -t "$session"
 		restart_fzf_menu
 	elif [[ "$minimized_options" == *"$choice"* ]]; then
@@ -61,16 +62,17 @@ execute_choice() {
 		activewindow=$(hyprctl activewindow -j)
 		targetX=$(echo "$activewindow" | jq -r '"\(.at.[0] + .size.[0] * 0.5|round)"')
 		targetY=$(echo "$activewindow" | jq -r '"\(.at.[1] + .size.[1] * 0.5|round)"')
-		targetW=$(echo "$activewindow" | jq -r '"\(.size.[0] * 0.5|round)"')
-		targetH=$(echo "$activewindow" | jq -r '"\(.size.[1] * 0.5|round)"')
-		finalTargetX=$((targetX + targetQuarterW + 8))
-		finalTargetY=$((targetY + targetQuarterH + 8))
+		targetW=$(echo "$activewindow" | jq -r '"\(.size.[0])"')
+		targetH=$(echo "$activewindow" | jq -r '"\(.size.[1])"')
+		finalTargetX=$((targetX + 8))
+		finalTargetY=$((targetY + 8))
 
-		hyprctl --batch "dispatch togglespecialworkspace $address ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $address ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress"
+		hyprctl --batch "setprop address:$address alpha 0.0 lock ; dispatch togglespecialworkspace $address ; dispatch movetoworkspace $workspace ; dispatch togglefloating address:$address ; dispatch resizewindowpixel exact $targetW $targetH,address:$address ; dispatch movecursor $finalTargetX $finalTargetY ; dispatch togglespecialworkspace $address ; dispatch togglefloating address:$address ; dispatch closewindow address:$originalAddress"
+		sleep 0.2 && hyprctl setprop address:$address alpha 1.0 lock
 		restart_fzf_menu
 	else
 		echo "Invalid choice."
 	fi
 }
 
-execute_choice "$(fzf_get_app_list | fzf --bind 'ctrl-r:reload(fzf_get_app_list)' --layout reverse)"
+execute_choice "$(fzf_get_app_list | fzf --bind 'ctrl-r:reload(fzf_get_app_list)' --layout reverse --info inline)"

@@ -1,2 +1,1 @@
-send refresh when we minimize
-
+TODO set up system actions similar to app menu
