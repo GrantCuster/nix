@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Initialize variables for hours, minutes, and seconds
+hours=0
+minutes=0
+seconds=0
+
+# Function to display the current time
+show_time() {
+	printf "%02d:%02d:%02d\n" $hours $minutes $seconds
+}
+
+# Create a named pipe for communication
+pipe=/tmp/timer_pipe
+mkfifo "$pipe"
+
+# Main timer loop
+while true; do
+	# Print the current time
+	show_time
+
+	# Read user input from the named pipe
+	if read -t 1 -n 1 input <"$pipe"; then
+		case $input in
+		r | R)
+			# Reset the timer to 00:00
+			hours=0
+			minutes=0
+			seconds=0
+			;;
+		p | P)
+			# Pause the timer
+			read -n 1 -s -p "Timer paused. Press any key to resume..."
+			;;
+		s | S)
+			# Resume the timer
+			;;
+		q | Q)
+			# Quit the timer
+			echo "Timer stopped."
+			rm "$pipe" # Remove the named pipe
+			exit 0
+			;;
+		esac
+	fi
+
+	# Increment the seconds
+	((seconds++))
+
+	# Check if seconds reach 60 and reset to 0
+	if [ $seconds -eq 60 ]; then
+		seconds=0
+		((minutes++))
+	fi
+
+	# Check if minutes reach 60 and reset to 0
+	if [ $minutes -eq 60 ]; then
+		minutes=0
+		((hours++))
+	fi
+done

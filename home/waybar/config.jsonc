@@ -6,7 +6,7 @@
   "spacing": 0, // Gaps between modules (4px)
   // Choose the order of the modules
   "modules-left": ["custom/pin"],
-  "modules-right": ["custom/extra", "battery", "clock"],
+  "modules-right": ["custom/timer", "custom/extra", "battery", "clock"],
   // Modules configuration
   "wlr/workspaces": {
     "active-only": true
@@ -179,5 +179,9 @@
     "tooltip": false,
     "escape": true,
     "signal": 10
+  },
+  "custom/timer": {
+    "interval": "once",
+    "exec": "$HOME/.config/waybar/timer"
   }
 }
