@@ -1,61 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 
-# Initialize variables for hours, minutes, and seconds
-hours=0
-minutes=0
-seconds=0
+STATUS_LOC="/tmp/timer_status"
+TIME_LOC="/tmp/timer_time"
 
-# Function to display the current time
-show_time() {
-	printf "%02d:%02d:%02d\n" $hours $minutes $seconds
-}
+CUR_TIME=$(date +%s)
+STATUS=$(cat "$STATUS_LOC")
+TIME=$(cat "$TIME_LOC")
 
-# Create a named pipe for communication
-pipe=/tmp/timer_pipe
-mkfifo "$pipe"
-
-# Main timer loop
-while true; do
-	# Print the current time
-	show_time
-
-	# Read user input from the named pipe
-	if read -t 1 -n 1 input <"$pipe"; then
-		case $input in
-		r | R)
-			# Reset the timer to 00:00
-			hours=0
-			minutes=0
-			seconds=0
-			;;
-		p | P)
-			# Pause the timer
-			read -n 1 -s -p "Timer paused. Press any key to resume..."
-			;;
-		s | S)
-			# Resume the timer
-			;;
-		q | Q)
-			# Quit the timer
-			echo "Timer stopped."
-			rm "$pipe" # Remove the named pipe
-			exit 0
-			;;
-		esac
-	fi
-
-	# Increment the seconds
-	((seconds++))
-
-	# Check if seconds reach 60 and reset to 0
-	if [ $seconds -eq 60 ]; then
-		seconds=0
-		((minutes++))
-	fi
-
-	# Check if minutes reach 60 and reset to 0
-	if [ $minutes -eq 60 ]; then
-		minutes=0
-		((hours++))
-	fi
-done
+if [[ $STATUS == "OFF" ]]; then
+	echo ""
+elif [[ $STATUS == "PAUSED" ]]; then
+	echo $(date -d @$TIME +%M:%S)
+elif [[ $STATUS == "PLAYING" ]]; then
+	DIFF=$(((CUR_TIME - TIME)))
+	echo $(date -d @$DIFF +%M:%S)
+elif [[ $STATUS == "STOPPED" ]]; then
+	echo "00:00"
+fi

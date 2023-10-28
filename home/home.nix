@@ -79,6 +79,8 @@
     screen
     libinput-gestures
     mods
+    glow
+    aichat
     lf
     brotab
     fzf
@@ -136,6 +138,7 @@
     (writeShellScriptBin "smart_minimize" (builtins.readFile ./scripts/smart_minimize))
     (writeShellScriptBin "switch_window_back" (builtins.readFile ./scripts/switch_window_back))
     (writeShellScriptBin "attach_or_create_system" (builtins.readFile ./scripts/attach_or_create_system))
+    (writeShellScriptBin "timer_control" (builtins.readFile ./scripts/timer_control))
   ];
 
   home.sessionVariables = {

@@ -181,7 +181,9 @@
     "signal": 10
   },
   "custom/timer": {
-    "interval": "once",
-    "exec": "$HOME/.config/waybar/timer"
+    "exec": "sh $HOME/.config/waybar/timer",
+    "interval": 1,
+    "tooltip": false,
+    "escape": true
   }
 }

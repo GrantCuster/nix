@@ -1,0 +1,30 @@
+#!/bin/bash
+
+STATUS_LOC="/tmp/timer_status"
+TIME_LOC="/tmp/timer_time"
+
+TIME=$(cat "$TIME_LOC")
+CUR_TIME=$(date +%s)
+
+# Process the command
+case $1 in
+start)
+	echo "PLAYING" >"$STATUS_LOC"
+	echo "$(((CUR_TIME - TIME)))" >"$TIME_LOC"
+	;;
+pause)
+	echo "PAUSED" >"$STATUS_LOC"
+	echo "$(((CUR_TIME - TIME)))" >"$TIME_LOC"
+	;;
+reset)
+	echo "STOPPED" >"$STATUS_LOC"
+	echo "$(((0)))" >"$TIME_LOC"
+	;;
+off)
+	echo "OFF" >"$STATUS_LOC"
+	echo "$(((0)))" >"$TIME_LOC"
+	;;
+*)
+	echo "Invalid command. Please try again."
+	;;
+esac
