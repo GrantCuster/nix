@@ -1,0 +1,4 @@
+#!/bin/bash
+
+pin "$1"
+timer_control restart
