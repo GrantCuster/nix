@@ -93,6 +93,9 @@
 
   services.tailscale.enable = true;
 
+  services.jellyfin.enable = true;
+  services.mullvad-vpn.enable = true;
+
   # QMK keyboard rules
   hardware.keyboard.qmk.enable = true;
 
@@ -122,11 +125,19 @@
     libnotify
     neofetch
     unzip
+    jellyfin
+    jellyfin-web
+    jellyfin-ffmpeg
   ];
 
   environment.sessionVariables = {
       WLR_NO_HARDWARE_CURSORS = "1";
     };
+
+networking.firewall = {
+  enable = true;
+  allowedTCPPorts = [ 8096 ];
+};
 
  system.stateVersion = "23.05"; # Did you read the comment?
 }

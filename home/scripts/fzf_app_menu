@@ -5,11 +5,9 @@ execute_choice() {
 
 	declare -A options=(
 		['default term']='tmux switch-client -t default || tmux new-session -s default'
-		['default browser']='nohup google-chrome-stable &'
 	)
 
-	option_names_raw="default term
-  new browser"
+	# option names raw in separate script
 
 	tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}' | grep -v -e "(tmux) menu" -e "(tmux) default" -e "(tmux) system")
 
@@ -24,9 +22,6 @@ execute_choice() {
 	elif [[ -n "${options[$choice]}" ]]; then
 		originalAddress=$(hyprctl activewindow -j | jq -r .address)
 		eval ${options[$choice]}
-		if [[ "$choice" == "new browser" ]]; then
-			sleep 0.3 && hyprctl dispatch closewindow "address:$originalAddress"
-		fi
 		restart_fzf_menu
 	elif [[ "$tmux_sessions" == *"$choice"* ]]; then
 		index=0
@@ -75,4 +70,4 @@ execute_choice() {
 	fi
 }
 
-execute_choice "$(fzf_get_app_list | fzf --bind 'ctrl-r:reload(fzf_get_app_list)' --layout reverse --info inline)"
+execute_choice "$(fzf_get_app_list | fzf --bind 'ctrl-r:reload(fzf_get_app_list)' --exact --layout reverse --no-separator --no-info --no-bold --prompt='> ' --color fg:#a89984,bg:#282828,hl:#ebdbb2,fg+:#ebddb2,bg+:#282828,hl+:#b8bb26 --color info:#ebddb2,prompt:#a89984,spinner:#ebddb2,pointer:#282828,marker:#282828,header:#ebddb2)"

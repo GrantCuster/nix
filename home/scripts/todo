@@ -1,4 +1,5 @@
 #!/bin/bash
 
 pin "$1"
-timer_control restart
+timer_control reset
+timer_control start

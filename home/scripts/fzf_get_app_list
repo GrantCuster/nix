@@ -1,7 +1,6 @@
 #!/bin/bash
 
-option_names_raw="default term
-new browser"
+option_names_raw="default term"
 
 tmux_sessions=$(tmux list-sessions | sed -E 's/:.*$//' | awk '{print "(tmux) " $0}' | grep -v -e "(tmux) menu" -e "(tmux) default" -e "(tmux) system")
 

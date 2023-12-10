@@ -87,6 +87,12 @@
     xdotool
     htop
     btop
+    bat
+    most
+    mullvad-vpn
+    qbittorrent
+    vlc
+    yt-dlp
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 
@@ -187,8 +193,8 @@
     enableCompletion = true;
     enableAutosuggestions = true;
     shellAliases = {
-      b = "browserapp";
       t = "tmux new-session -A -s $(pwd | awk -F / '{print $NF}')";
+      c = "clear";
       };
    # oh my zsh gets us substring search
     # the option for enabling it separately was not working for me
