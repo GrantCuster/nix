@@ -25,6 +25,30 @@
       };
     };
 
+
+    # Available through 'nixos-rebuild --flake .#skybax'
+    nixosConfigurations = {
+      skybax = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; }; # Pass flake inputs to our config
+        modules = [ 
+          ./hosts/skybax.nix 
+          ./system/system.nix 
+        ];
+      };
+    };
+
+    # Available through 'nixos-rebuild --flake .#brokenhorn'
+    nixosConfigurations = {
+      brokenhorn = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; }; # Pass flake inputs to our config
+        modules = [ 
+          ./hosts/brokenhorn.nix 
+          ./system/system.nix 
+        ];
+      };
+    };
+
+
     # Standalone home-manager configuration entrypoint
     # Available through 'home-manager --flake .#home'
     homeConfigurations = {
