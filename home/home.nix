@@ -93,6 +93,12 @@
     qbittorrent
     vlc
     yt-dlp
+    socat
+
+    tree-sitter
+    lua-language-server
+    nodePackages_latest.typescript-language-server
+    nixd
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
 

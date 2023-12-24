@@ -1,3 +1,27 @@
+/* Dark Mode */
+@define-color dark0 #1d2021;
+@define-color dark1 #3c3836;
+@define-color dark2 #504945;
+@define-color dark3 #665c54;
+@define-color dark4 #7c6f64;
+
+/* Light Mode */
+@define-color light0 #f9f5d7;
+@define-color light1 #ebdbb2;
+@define-color light2 #d5c4a1;
+@define-color light3 #bdae93;
+@define-color light4 #a89984;
+
+/* Additional Colors */
+@define-color red #cc241d;
+@define-color green #98971a;
+@define-color yellow #d79921;
+@define-color blue #458588;
+@define-color purple #b16286;
+@define-color aqua #689d6a;
+@define-color orange #d65d0e;
+@define-color gray #928374;
+
 * {
   /* `otf-font-awesome` is required to be installed for icons */
   font-family: "JetBrainsMonoNL Nerd Font", Roboto, Helvetica, Arial, sans-serif;
@@ -6,7 +30,7 @@
 
 window#waybar {
   background-color: #1d2021;
-  color: #ebdbb2;
+  color: @light1;
   /* border-bottom: solid 1px #504945; */
 }
 
@@ -34,19 +58,25 @@ button {
 button:hover {
   background: inherit;
   border: none;
+  box-shadow: none;
 }
 
 #workspaces button {
   padding: 0 0;
   padding: 0 8px;
-  background-color: transparent;
+  background-color: @dark0;
   color: inherit;
+  transition: all 0s linear;
 }
 
 #workspaces button:hover {
+  background: @red;
+  border: none;
 }
 
-#workspaces button.focused {
+#workspaces button.active {
+  background-color: @light4;
+    color: @dark0;
 }
 
 #workspaces button.urgent {

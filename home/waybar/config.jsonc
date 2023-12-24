@@ -5,11 +5,12 @@
   // "width": 1280, // Waybar width
   "spacing": 0, // Gaps between modules (4px)
   // Choose the order of the modules
-  "modules-left": ["custom/pin"],
+  "modules-left": ["hyprland/workspaces"],
   "modules-right": ["custom/timer", "custom/extra", "battery", "clock"],
+  // "modules-center": ["hyprland/window"],
   // Modules configuration
-  "wlr/workspaces": {
-    "active-only": true
+  "hyprland/workspaces": {
+    "format": "{name}"
   },
   "keyboard-state": {
     "numlock": true,
