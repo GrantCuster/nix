@@ -91,8 +91,6 @@
     pulse.enable = true;
   };
 
-  services.tailscale.enable = true;
-
   services.jellyfin.enable = true;
   services.mullvad-vpn.enable = true;
 

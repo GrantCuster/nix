@@ -24,8 +24,8 @@
 
 * {
   /* `otf-font-awesome` is required to be installed for icons */
-  font-family: "JetBrainsMonoNL Nerd Font", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-family: "JetBrainsMono NL Nerd Font", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
 }
 
 window#waybar {
@@ -62,21 +62,23 @@ button:hover {
 }
 
 #workspaces button {
-  padding: 0 0;
   padding: 0 8px;
   background-color: @dark0;
   color: inherit;
   transition: all 0s linear;
+  font-weight: 400;
 }
 
 #workspaces button:hover {
-  background: @red;
-  border: none;
+  background: @dark1;
+  font-weight: 400;
+  text-shadow: none;
 }
 
 #workspaces button.active {
   background-color: @light4;
-    color: @dark0;
+  color: black;
+  font-weight: 700;
 }
 
 #workspaces button.urgent {

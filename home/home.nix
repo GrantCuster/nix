@@ -32,6 +32,9 @@
       allowUnfree = true;
       # Workaround for https://github.com/nix-community/home-manager/issues/2942 
       allowUnfreePredicate = (_: true);
+      permittedInsecurePackages = [
+        "electron-25.9.0"
+      ];
     };
   };
 
@@ -44,7 +47,6 @@
   # programs.neovim.enable = true;
   home.packages = with pkgs; [ 
     google-chrome
-    obsidian
     neovim
     rofi-wayland-unwrapped
     jq
@@ -67,6 +69,7 @@
     grim
     acpi
     qmk
+    obsidian
     usbutils
     inotify-tools
     imagemagick
@@ -100,7 +103,7 @@
     nodePackages_latest.typescript-language-server
     nixd
 
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    (nerdfonts.override { fonts = [ "JetBrainsMono" "Iosevka" ]; })
 
     (writeShellScriptBin "system_menu" (builtins.readFile ./scripts/system_menu))
     (writeShellScriptBin "fzf_system_menu" (builtins.readFile ./scripts/fzf_system_menu))
@@ -152,6 +155,7 @@
     (writeShellScriptBin "attach_or_create_system" (builtins.readFile ./scripts/attach_or_create_system))
     (writeShellScriptBin "timer_control" (builtins.readFile ./scripts/timer_control))
     (writeShellScriptBin "todo" (builtins.readFile ./scripts/todo))
+    (writeShellScriptBin "update_tabs" (builtins.readFile ./scripts/update_tabs))
   ];
 
   home.sessionVariables = {
@@ -163,6 +167,7 @@
   programs.alacritty = {
     enable = true;
     settings.font.normal.family = "JetBrainsMonoNL Nerd Font Mono";
+    # settings.font.normal.family = "Iosevka Nerd Font";
     settings.font.size = 11;
     settings.window.padding = {
       x = 8;
