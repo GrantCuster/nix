@@ -20,6 +20,11 @@ handle() {
       workspace=$(hyprctl activeworkspace -j | jq '.id')
       hyprctl dispatch "renameworkspace $workspace $workspace $result_string"
       ;;
+    closewindow*)
+      if [[ 'hyprctl activeworkspace | grep "windows: 0"' ]]; then
+        hyprctl dispatch workspace m-1
+      fi
+      ;;
    esac
 }
 

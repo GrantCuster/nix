@@ -157,6 +157,7 @@
     (writeShellScriptBin "todo" (builtins.readFile ./scripts/todo))
     (writeShellScriptBin "update_tabs" (builtins.readFile ./scripts/update_tabs))
     (writeShellScriptBin "close_workspace" (builtins.readFile ./scripts/close_workspace))
+    (writeShellScriptBin "cleanup_tmux" (builtins.readFile ./scripts/cleanup_tmux))
   ];
 
   home.sessionVariables = {
@@ -207,6 +208,7 @@
     shellAliases = {
       t = "tmux new-session -A -s $(pwd | awk -F / '{print $NF}')";
       c = "clear";
+      n = "nvim .";
       };
    # oh my zsh gets us substring search
     # the option for enabling it separately was not working for me
