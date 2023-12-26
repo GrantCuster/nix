@@ -156,6 +156,7 @@
     (writeShellScriptBin "timer_control" (builtins.readFile ./scripts/timer_control))
     (writeShellScriptBin "todo" (builtins.readFile ./scripts/todo))
     (writeShellScriptBin "update_tabs" (builtins.readFile ./scripts/update_tabs))
+    (writeShellScriptBin "close_workspace" (builtins.readFile ./scripts/close_workspace))
   ];
 
   home.sessionVariables = {
@@ -228,6 +229,7 @@
     settings = {
       add_newline = false;
       line_break.disabled = true;
+      character.disabled = true;
     };
   };
 

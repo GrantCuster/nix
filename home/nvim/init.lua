@@ -28,6 +28,10 @@ vim.cmd("set shiftwidth=2")
 vim.cmd("set number")
 vim.keymap.set('n', '<leader>n', ':set number!<CR>', {})
 
+vim.keymap.set('n', '<leader>w', ':w<CR>', {})
+
+vim.keymap.set('n', '<leader>q', ':q<CR>', {})
+
 require("lazy").setup({
   {
     "ellisonleao/gruvbox.nvim",
@@ -78,7 +82,7 @@ require("lazy").setup({
     config = function()
       local configs = require("nvim-treesitter.configs")
       configs.setup({
-        ensure_installed = { "lua", "javascript", "html", "vim", "vimdoc" },
+        ensure_installed = { "lua", "javascript", "html", "vim", "vimdoc", "markdown", "markdown_inline" },
         sync_install = false,
         auto_install = true,
         ignore_install = {},
@@ -194,5 +198,36 @@ require("lazy").setup({
       require('lspconfig')['nixd'].setup { capabilities = capabilities }
     end
   },
-  { "folke/neodev.nvim", opts = {} }
+  { "folke/neodev.nvim", opts = {} },
+  {
+    "epwalsh/obsidian.nvim",
+    version = "*",
+    lazy = true,
+    ft = "markdown",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    opts = {
+      workspaces = {
+        {
+          name = "personal",
+          path = "~/obsidian",
+        },
+      },
+      daily_notes = {
+        folder = "daily",
+      },
+      completion = {
+        min_chars = 0
+      },
+      {
+        ui = {
+          [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
+          ["x"] = { char = "", hl_group = "ObsidianDone" },
+          [">"] = { char = "", hl_group = "ObsidianRightArrow" },
+          ["~"] = { char = "󰰱", hl_group = "ObsidianTilde" },
+        },
+      }
+    },
+  }
 })

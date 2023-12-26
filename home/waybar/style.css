@@ -67,6 +67,7 @@ button:hover {
   color: inherit;
   transition: all 0s linear;
   font-weight: 400;
+  border-right: solid 1px @dark1;
 }
 
 #workspaces button:hover {
@@ -112,7 +113,7 @@ button:hover {
 #custom-pin,
 #custom-timer,
 #mpd {
-  padding: 0 8px;
+  padding: 0 9px;
   /* color: #928374; */
 }
 

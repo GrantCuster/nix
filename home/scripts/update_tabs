@@ -6,7 +6,7 @@ handle() {
       title=$(echo "$1" | awk -F ',' '{print $2}' | cut -d '>' -f 2)
       input_string=$(echo "$title" | cut -c 1-22)
 
-      desired_length=16
+      desired_length=12
 
       # If the string is shorter than 22 characters, pad it with spaces
       if [ ${#input_string} -lt $desired_length ]; then
@@ -20,7 +20,7 @@ handle() {
       workspace=$(hyprctl activeworkspace -j | jq '.id')
       hyprctl dispatch "renameworkspace $workspace $workspace $result_string"
       ;;
-      esac
+   esac
 }
 
 socat -U - UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock | while read -r line; do handle "$line"; done

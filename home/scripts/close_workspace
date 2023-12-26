@@ -1,0 +1,11 @@
+#!/bin/bash
+
+workspace=$(hyprctl activeworkspace -j | jq '.id')
+addresses=($(hyprctl clients -j | jq -r "map(select(.workspace.id == $workspace)) | .[].address"))
+
+hyprctl dispatch workspace previous
+# Iterate through the addresses and run the command for each one
+for address in "${addresses[@]}"; do
+    echo "Running command for address: $address"
+    hyprctl dispatch "closewindow address:$address"
+done
