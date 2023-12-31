@@ -160,6 +160,7 @@
     (writeShellScriptBin "close_workspace" (builtins.readFile ./scripts/close_workspace))
     (writeShellScriptBin "cleanup_tmux" (builtins.readFile ./scripts/cleanup_tmux))
     (writeShellScriptBin "smart_tmux" (builtins.readFile ./scripts/smart_tmux))
+    (writeShellScriptBin "smart_nvim" (builtins.readFile ./scripts/smart_nvim))
   ];
 
   home.sessionVariables = {
@@ -209,9 +210,9 @@
     enableCompletion = true;
     enableAutosuggestions = true;
     shellAliases = {
-      t = "tmux new-session -A -s $(pwd | awk -F / '{print $NF}')";
+      t = "smart_tmux";
       c = "clear";
-      n = "nvim .";
+      n = "smart_nvim";
       rh = "home-manager switch --flake /home/grant/nix#home";
       g = "nohup google-chrome-stable && sleep 0.1 && exit";
       m = "fzf_system_menu";
