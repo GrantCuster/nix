@@ -19,6 +19,7 @@ vim.opt.scrolloff = 9999
 vim.opt.swapfile = false
 vim.opt.clipboard = 'unnamedplus'
 vim.opt.wrap = true
+vim.opt.equalalways = false
 
 vim.cmd("set expandtab")
 vim.cmd("set tabstop=2")
@@ -27,10 +28,41 @@ vim.cmd("set shiftwidth=2")
 
 vim.cmd("set number")
 vim.keymap.set('n', '<leader>n', ':set number!<CR>', {})
+vim.cmd("autocmd filetype markdown setlocal nonumber")
 
-vim.keymap.set('n', '<leader>w', ':w<CR>', {})
+vim.cmd("set ignorecase")
+vim.keymap.set('n', '<escape>', ':noh<CR>')
 
-vim.keymap.set('n', '<leader>q', ':q<CR>', {})
+vim.api.nvim_set_hl(0, "EndOfBuffer", { fg = '#1d2021' })
+
+-- highlight yanked text for 200ms using the "Visual" highlight group
+vim.cmd[[
+augroup highlight_yank
+autocmd!
+au TextYankPost * silent! lua vim.highlight.on_yank({higroup="Visual", timeout=200})
+augroup END
+]]
+
+vim.keymap.set('n', '<leader>s', ':w<CR>', {})
+vim.keymap.set('n', '<leader>w', ':q<CR>', {})
+
+vim.keymap.set('n', '<leader>tc', 'o- [ ] ')
+
+
+vim.keymap.set('n', 'J', ':move .+1<CR>==')
+vim.keymap.set('n', 'K', ':move .-2<CR>==')
+vim.keymap.set('v', 'J', ":move '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":move '<-2<CR>gv=gv")
+
+vim.keymap.set('n', '<leader><enter>', function()
+  local winwidth = vim.fn.winwidth(0) * 0.5
+  local winheight = vim.fn.winheight(0)
+  if winwidth > winheight then
+    return ':vsplit<CR><C-W>l'
+  else
+    return ':split<CR><C-W>j'
+  end
+end, {expr = true, replace_keycodes = true})
 
 require("lazy").setup({
   {
@@ -46,10 +78,12 @@ require("lazy").setup({
           operators = false,
           folds = false
         },
-        invert_selection = true
+        invert_selection = true,
+        transparent_mode = true
       })
       vim.o.background = "dark"
       vim.cmd([[colorscheme gruvbox]])
+      vim.api.nvim_set_hl(0, "Todo", { bg = 'none' })
     end
   },
   {
@@ -121,10 +155,13 @@ require("lazy").setup({
       'nvim-tree/nvim-web-devicons'
     },
     config = function()
-      require('lualine').setup({
+     require('lualine').setup({
         options = {
-          theme = 'auto'
-        }
+          theme = 'gruvbox',
+          icons_enabled = false,
+          section_separators = { left = '', right = ''},
+          component_separators = { left = '', right = ''},
+        },
       })
     end
   },
@@ -136,7 +173,7 @@ require("lazy").setup({
       lspconfig.tsserver.setup({})
       lspconfig.nixd.setup({})
 
-      vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
+      vim.keymap.set('n', 'I', vim.lsp.buf.hover, {})
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
       vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, {})
     end
@@ -202,7 +239,6 @@ require("lazy").setup({
   {
     "epwalsh/obsidian.nvim",
     version = "*",
-    lazy = true,
     ft = "markdown",
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -220,14 +256,25 @@ require("lazy").setup({
       completion = {
         min_chars = 0
       },
-      {
         ui = {
-          [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
-          ["x"] = { char = "", hl_group = "ObsidianDone" },
-          [">"] = { char = "", hl_group = "ObsidianRightArrow" },
-          ["~"] = { char = "󰰱", hl_group = "ObsidianTilde" },
-        },
-      }
+        hl_groups = {
+          ObsidianTodo = { bold = true, fg = "#7c6f64" },
+          ObsidianDone = { bold = true, fg = "#98971a" },
+        }
+      },
+   }
+  },
+  { "opdavies/toggle-checkbox.nvim",
+    config = function()
+      vim.keymap.set("n", "<leader>tt", ":lua require('toggle-checkbox').toggle()<CR>")
+    end
+  },
+  {
+    'numToStr/Comment.nvim',
+    opts = {
+      -- add any options here
     },
+    lazy = false,
   }
 })
+

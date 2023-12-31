@@ -1,5 +1,11 @@
 #!/bin/bash
 
-tmux list-sessions -F '#{session_attached} #{session_id}' | \
-  awk '/^0/{print $2}' | \
-  xargs -n 1 tmux kill-session -t
+output=$(tmux ls)
+
+# Use grep to find lines matching both conditions
+matches=$(echo "$output" | grep -P '^\d+:.*(?<!\(attached\))$' | cut -d ':' -f 1)
+
+# Loop through matched numbers and print them
+for num in $matches; do
+  tmux kill-session -t "$num"
+done

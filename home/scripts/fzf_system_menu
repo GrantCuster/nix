@@ -65,7 +65,7 @@ sorted+=("${remaining[@]}")
 
 sorted_names_raw=$(printf '%s\n' "${sorted[@]}")
 
-choice=$(echo "$sorted_names_raw" | fzf --exact --layout reverse --no-separator --no-info --no-bold --prompt='> ' --color fg:#a89984,bg:#282828,hl:#ebdbb2,fg+:#ebddb2,bg+:#282828,hl+:#b8bb26 --color info:#ebddb2,prompt:#a89984,spinner:#ebddb2,pointer:#282828,marker:#282828,header:#ebddb2)
+choice=$(echo "$sorted_names_raw" | fzf --exact --layout reverse --no-separator --no-info --no-bold --prompt='> ' --color fg:#a89984,bg:#1d2021,hl:#ebdbb2,fg+:#ebddb2,bg+:#282828,hl+:#b8bb26 --color info:#ebddb2,prompt:#a89984,spinner:#ebddb2,pointer:#282828,marker:#282828,header:#ebddb2)
 
 # Execute the chosen command
 if [[ -n "${options[$choice]}" ]]; then

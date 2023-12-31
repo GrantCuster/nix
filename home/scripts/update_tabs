@@ -21,7 +21,9 @@ handle() {
       hyprctl dispatch "renameworkspace $workspace $workspace $result_string"
       ;;
     closewindow*)
-      if [[ 'hyprctl activeworkspace | grep "windows: 0"' ]]; then
+      windows=$(hyprctl activeworkspace -j | jq '.windows')
+      cleanup_tmux
+      if [[ "$windows" -eq 0 ]]; then
         hyprctl dispatch workspace m-1
       fi
       ;;

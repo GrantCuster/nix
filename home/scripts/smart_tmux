@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Check if at least one argument was passed
+if [ $# -gt 0 ]; then
+  if tmux has-session -t "$1" 2>/dev/null; then
+    tmux switch-client -t "$1" 
+  else 
+    tmux new-session -d -t "$1"
+    tmux switch-client -t "$1" 
+  fi
+fi
+
+home_dir="$HOME"
+current_dir="$(pwd)"
+
+if [ "$current_dir" = "$home_dir" ]; then
+  # TODO filter out numbers
+  chosen=$(tmux ls -F '#{session_name}' | fzf)
+  tmux switch-client -t "$chosen" 
+else
+  dir="$(basename "$current_dir")"
+  echo "$dir"
+  if tmux has-session -t "$dir" 2>/dev/null; then
+    tmux switch-client -t "$dir" 
+  else 
+    tmux new-session -d -t "$dir"
+    tmux switch-client -t "$dir" 
+  fi
+fi

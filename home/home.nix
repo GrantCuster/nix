@@ -97,6 +97,7 @@
     vlc
     yt-dlp
     socat
+    wezterm
 
     tree-sitter
     lua-language-server
@@ -158,6 +159,7 @@
     (writeShellScriptBin "update_tabs" (builtins.readFile ./scripts/update_tabs))
     (writeShellScriptBin "close_workspace" (builtins.readFile ./scripts/close_workspace))
     (writeShellScriptBin "cleanup_tmux" (builtins.readFile ./scripts/cleanup_tmux))
+    (writeShellScriptBin "smart_tmux" (builtins.readFile ./scripts/smart_tmux))
   ];
 
   home.sessionVariables = {
@@ -165,8 +167,7 @@
   };
 
   programs.kitty.enable = true;
-
-  programs.alacritty = {
+ programs.alacritty = {
     enable = true;
     settings.font.normal.family = "JetBrainsMonoNL Nerd Font Mono";
     # settings.font.normal.family = "Iosevka Nerd Font";
@@ -175,8 +176,10 @@
       x = 8;
       y = 6;
     };
+    settings.keyboard.bindings = [
+    ];
     settings.colors = {
-      primary.background = "0x282828";
+      primary.background = "0x1d2021";
       primary.foreground = "0xebdbb2";
       normal = {
         black = "0x282828";
@@ -209,6 +212,9 @@
       t = "tmux new-session -A -s $(pwd | awk -F / '{print $NF}')";
       c = "clear";
       n = "nvim .";
+      rh = "home-manager switch --flake /home/grant/nix#home";
+      g = "nohup google-chrome-stable && sleep 0.1 && exit";
+      m = "fzf_system_menu";
       };
    # oh my zsh gets us substring search
     # the option for enabling it separately was not working for me
