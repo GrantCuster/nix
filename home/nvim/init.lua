@@ -33,6 +33,8 @@ vim.cmd("autocmd filetype markdown setlocal nonumber")
 vim.cmd("set ignorecase")
 vim.keymap.set('n', '<escape>', ':noh<CR>')
 
+vim.keymap.set('n', '<leader>bb', ':edit #<CR>')
+
 vim.api.nvim_set_hl(0, "EndOfBuffer", { fg = '#1d2021' })
 
 -- highlight yanked text for 200ms using the "Visual" highlight group
@@ -227,6 +229,10 @@ require("lazy").setup({
         }, {
             { name = 'cmdline' }
           })
+      })
+
+      cmp.setup.filetype('markdown', {
+        sources = cmp.config.sources({})
       })
 
       local capabilities = require('cmp_nvim_lsp').default_capabilities()

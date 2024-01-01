@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Function to save or update a workspace name
+workspace_id="$1"
+workspace_name="$2"
+tmp_file="/tmp/workspace_names"
+
+if [ ! -f "$tmp_file" ]; then
+  touch "$tmp_file" # Create the file if it doesn't exist
+fi
+
+# Check if the workspace_id already exists in the file
+grep -q "^$workspace_id " "$tmp_file"
+
+if [ $? -eq 0 ]; then
+  if [ -z "$2" ]; then
+    # no second argument then clear entry
+    sed -i "/^$workspace_id /d" "$tmp_file"
+    title=$(hyprctl activewindow -j | jq -r '.title')
+    truncated=${title:0:22}
+    hyprctl dispatch "renameworkspace $workspace_id $workspace_id $truncated"
+  else
+    # Update the existing entry
+    sed -i "s/^$workspace_id .*/$workspace_id $workspace_name/" "$tmp_file"
+    hyprctl dispatch "renameworkspace $workspace_id $workspace_id $workspace_name"
+  fi
+else
+  # Add a new entry
+  hyprctl dispatch "renameworkspace $workspace_id $workspace_id $workspace_name"
+fi

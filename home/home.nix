@@ -161,6 +161,7 @@
     (writeShellScriptBin "cleanup_tmux" (builtins.readFile ./scripts/cleanup_tmux))
     (writeShellScriptBin "smart_tmux" (builtins.readFile ./scripts/smart_tmux))
     (writeShellScriptBin "smart_nvim" (builtins.readFile ./scripts/smart_nvim))
+    (writeShellScriptBin "rename_hyprland_tab" (builtins.readFile ./scripts/rename_hyprland_tab))
   ];
 
   home.sessionVariables = {
@@ -216,6 +217,7 @@
       rh = "home-manager switch --flake /home/grant/nix#home";
       g = "nohup google-chrome-stable && sleep 0.1 && exit";
       m = "fzf_system_menu";
+      rn = "rename_hyprland_tab";
       };
    # oh my zsh gets us substring search
     # the option for enabling it separately was not working for me

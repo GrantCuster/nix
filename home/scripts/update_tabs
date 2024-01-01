@@ -3,22 +3,26 @@
 handle() {
   case $1 in
     activewindow\>\>*)
-      title=$(echo "$1" | awk -F ',' '{print $2}' | cut -d '>' -f 2)
-      input_string=$(echo "$title" | cut -c 1-22)
+      workspace=$(hyprctl activeworkspace -j | jq '.id')
 
-      desired_length=12
+      matched=false
 
-      # If the string is shorter than 22 characters, pad it with spaces
-      if [ ${#input_string} -lt $desired_length ]; then
-        padded_string=$(printf "%-${desired_length}s" "$input_string")
-        result_string=${padded_string:0:$desired_length}
-      else
-        # If the string is longer than 22 characters, truncate it
-        result_string=${input_string:0:$desired_length}
+      # use name from file
+      workspace_tmp_file="/tmp/workspace_names"
+      if [ -f "$workspace_tmp_file" ]; then
+        result=$(grep "^$workspace " "$workspace_tmp_file")
+        if [ -n "$result" ]; then
+          hyprctl dispatch "renameworkspace $workspace $workspace ${result#* }"
+          matched=true
+        fi
       fi
 
-      workspace=$(hyprctl activeworkspace -j | jq '.id')
-      hyprctl dispatch "renameworkspace $workspace $workspace $result_string"
+      if [ "$matched" = false ]; then
+        echo 'matched should be false'
+          title=$(echo "$1" | awk -F ',' '{print $2}' | cut -d '>' -f 2)
+          result_string=${title:0:22}
+          hyprctl dispatch "renameworkspace $workspace $workspace $result_string"
+        fi
       ;;
     closewindow*)
       windows=$(hyprctl activeworkspace -j | jq '.windows')
