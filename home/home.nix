@@ -156,7 +156,7 @@
     (writeShellScriptBin "attach_or_create_system" (builtins.readFile ./scripts/attach_or_create_system))
     (writeShellScriptBin "timer_control" (builtins.readFile ./scripts/timer_control))
     (writeShellScriptBin "todo" (builtins.readFile ./scripts/todo))
-    (writeShellScriptBin "update_tabs" (builtins.readFile ./scripts/update_tabs))
+    (writeShellScriptBin "hyprland_hooks" (builtins.readFile ./scripts/hyprland_hooks))
     (writeShellScriptBin "close_workspace" (builtins.readFile ./scripts/close_workspace))
     (writeShellScriptBin "cleanup_tmux" (builtins.readFile ./scripts/cleanup_tmux))
     (writeShellScriptBin "smart_tmux" (builtins.readFile ./scripts/smart_tmux))

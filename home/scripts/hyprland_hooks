@@ -18,11 +18,10 @@ handle() {
       fi
 
       if [ "$matched" = false ]; then
-        echo 'matched should be false'
-          title=$(echo "$1" | awk -F ',' '{print $2}' | cut -d '>' -f 2)
-          result_string=${title:0:22}
-          hyprctl dispatch "renameworkspace $workspace $workspace $result_string"
-        fi
+        title=$(echo "$1" | awk -F ',' '{print $2}' | cut -d '>' -f 2)
+        result_string=${title:0:22}
+        hyprctl dispatch "renameworkspace $workspace $workspace $result_string"
+      fi
       ;;
     closewindow*)
       windows=$(hyprctl activeworkspace -j | jq '.windows')
@@ -31,7 +30,21 @@ handle() {
         hyprctl dispatch workspace m-1
       fi
       ;;
-   esac
+    monitoradded*)
+      monitor="${1#*>>}"
+      if [ "$monitor" = "DP-4" ]; then
+        hyprctl keyword monitor eDP-1,disabled
+        hyprctl dispatch "workspace 1"
+      fi
+      ;;
+    monitorremoved*)
+      monitor="${1#*>>}"
+      if [ "$monitor" = "DP-4" ]; then
+        hyprctl keyword monitor eDP-1,preferred,auto,1.33333
+        hyprctl dispatch "workspace 1"
+      fi
+      ;;
+  esac
 }
 
 socat -U - UNIX-CONNECT:/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock | while read -r line; do handle "$line"; done

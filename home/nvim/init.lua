@@ -12,6 +12,9 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+-- for obsidian plugin
+vim.opt.conceallevel = 1
+
 vim.g.mapleader = " "
 vim.keymap.set('i', 'jk', '<esc>', { noremap = true })
 
@@ -27,6 +30,7 @@ vim.cmd("set softtabstop=2")
 vim.cmd("set shiftwidth=2")
 
 vim.cmd("set number")
+vim.cmd("set relativenumber")
 vim.keymap.set('n', '<leader>n', ':set number!<CR>', {})
 vim.cmd("autocmd filetype markdown setlocal nonumber")
 
@@ -49,7 +53,6 @@ vim.keymap.set('n', '<leader>s', ':w<CR>', {})
 vim.keymap.set('n', '<leader>w', ':q<CR>', {})
 
 vim.keymap.set('n', '<leader>tc', 'o- [ ] ')
-
 
 vim.keymap.set('n', 'J', ':move .+1<CR>==')
 vim.keymap.set('n', 'K', ':move .-2<CR>==')

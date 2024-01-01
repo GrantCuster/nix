@@ -1,2 +1,2 @@
 read -p "Rename tab: " tab_name
-rename_hyprland_tab tab_name
+rename_hyprland_tab "$tab_name"
