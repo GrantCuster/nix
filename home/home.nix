@@ -162,6 +162,8 @@
     (writeShellScriptBin "smart_tmux" (builtins.readFile ./scripts/smart_tmux))
     (writeShellScriptBin "smart_nvim" (builtins.readFile ./scripts/smart_nvim))
     (writeShellScriptBin "rename_hyprland_tab" (builtins.readFile ./scripts/rename_hyprland_tab))
+    (writeShellScriptBin "rename_hyprland_tab" (builtins.readFile ./scripts/rename_hyprland_tab))
+    (writeShellScriptBin "prompt_tab_rename" (builtins.readFile ./scripts/prompt_tab_rename))
   ];
 
   home.sessionVariables = {

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Function to save or update a workspace name
-workspace_id="$1"
-workspace_name="$2"
+workspace_id=$(hyprctl activeworkspace -j | jq -r '.id')
+workspace_name="$1"
 tmp_file="/tmp/workspace_names"
 
 if [ ! -f "$tmp_file" ]; then
@@ -13,8 +13,8 @@ fi
 grep -q "^$workspace_id " "$tmp_file"
 
 if [ $? -eq 0 ]; then
-  if [ -z "$2" ]; then
-    # no second argument then clear entry
+  if [ -z "$1" ]; then
+    # no argument then clear entry
     sed -i "/^$workspace_id /d" "$tmp_file"
     title=$(hyprctl activewindow -j | jq -r '.title')
     truncated=${title:0:22}
@@ -26,5 +26,6 @@ if [ $? -eq 0 ]; then
   fi
 else
   # Add a new entry
+  echo "$workspace_id $workspace_name" >> "$tmp_file"
   hyprctl dispatch "renameworkspace $workspace_id $workspace_id $workspace_name"
 fi
