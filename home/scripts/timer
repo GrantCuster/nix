@@ -1,0 +1,58 @@
+#!/bin/bash
+
+timer_file="/tmp/timer"
+stopped_timer_file="/tmp/stopped_timer"
+
+format_time() {
+  local seconds="$1"
+  if ((seconds < 3600)); then
+    printf "%02d:%02d" $((seconds / 60)) $((seconds % 60))
+  else
+    printf "%d:%02d:%02d" $((seconds / 3600)) $(((seconds % 3600) / 60)) $((seconds % 60))
+  fi
+}
+
+case "$1" in
+  start)
+    if [ -e "$stopped_timer_file" ]; then
+      new_start_time=$(($(date +%s) - $(cat "$stopped_timer_file")))
+      echo "$new_start_time" > "$timer_file"
+      rm "$stopped_timer_file"
+    else
+      if [ ! -e "$timer_file" ]; then
+        date +%s > "$timer_file"
+      fi
+    fi
+    ;;
+  stop)
+    if [ -e "$timer_file" ]; then
+      elapsed_time=$(($(date +%s) - $(cat "$timer_file")))
+      echo "$elapsed_time" > "$stopped_timer_file"
+    fi
+    ;;
+  get_current)
+    if [ -e "$stopped_timer_file" ]; then
+      elapsed_time=$(cat "$stopped_timer_file")
+      echo $(format_time $elapsed_time)
+    else
+      if [ -e "$timer_file" ]; then
+        elapsed_time=$(($(date +%s) - $(cat "$timer_file")))
+        echo $(format_time $elapsed_time)
+      fi
+    fi
+    ;;
+  clear)
+    if [ -e "$stopped_timer_file" ]; then
+      rm "$stopped_timer_file"
+    fi
+    if [ -e "$timer_file" ]; then
+      rm "$timer_file"
+    fi
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|get_current|clear}"
+    exit 1
+    ;;
+esac
+
+exit 0

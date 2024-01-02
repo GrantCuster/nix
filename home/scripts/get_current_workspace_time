@@ -1,7 +1,0 @@
-#!/bin/bash
-
-current_space=$(hyprctl activeworkspace -j | jq -r .name)
-
-time=$(get_workspace_elapsed_time "$current_space")
-
-echo $time

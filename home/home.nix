@@ -114,12 +114,7 @@
     (writeShellScriptBin "rofi_keybinds" (builtins.readFile ./scripts/rofi_keybinds))
     (writeShellScriptBin "use_browser" (builtins.readFile ./scripts/use_browser))
     (writeShellScriptBin "save_history" (builtins.readFile ./scripts/save_history))
-    (writeShellScriptBin "start_workspace_timer" (builtins.readFile ./scripts/start_workspace_timer))
     (writeShellScriptBin "back_to_workspace" (builtins.readFile ./scripts/back_to_workspace))
-    (writeShellScriptBin "get_workspace_elapsed_time" (builtins.readFile ./scripts/get_workspace_elapsed_time))
-    (writeShellScriptBin "get_current_workspace_time" (builtins.readFile ./scripts/get_current_workspace_time))
-    (writeShellScriptBin "restart_current_workspace_timer" (builtins.readFile ./scripts/restart_current_workspace_timer))
-    (writeShellScriptBin "clear_current_workspace_timer" (builtins.readFile ./scripts/clear_current_workspace_timer))
     (writeShellScriptBin "json_recent_workspaces" (builtins.readFile ./scripts/json_recent_workspaces))
     (writeShellScriptBin "go_home_space" (builtins.readFile ./scripts/go_home_space))
     (writeShellScriptBin "rename_workspace" (builtins.readFile ./scripts/rename_workspace))
@@ -154,7 +149,6 @@
     (writeShellScriptBin "smart_minimize" (builtins.readFile ./scripts/smart_minimize))
     (writeShellScriptBin "switch_window_back" (builtins.readFile ./scripts/switch_window_back))
     (writeShellScriptBin "attach_or_create_system" (builtins.readFile ./scripts/attach_or_create_system))
-    (writeShellScriptBin "timer_control" (builtins.readFile ./scripts/timer_control))
     (writeShellScriptBin "todo" (builtins.readFile ./scripts/todo))
     (writeShellScriptBin "hyprland_hooks" (builtins.readFile ./scripts/hyprland_hooks))
     (writeShellScriptBin "close_workspace" (builtins.readFile ./scripts/close_workspace))
@@ -162,8 +156,8 @@
     (writeShellScriptBin "smart_tmux" (builtins.readFile ./scripts/smart_tmux))
     (writeShellScriptBin "smart_nvim" (builtins.readFile ./scripts/smart_nvim))
     (writeShellScriptBin "rename_hyprland_tab" (builtins.readFile ./scripts/rename_hyprland_tab))
-    (writeShellScriptBin "rename_hyprland_tab" (builtins.readFile ./scripts/rename_hyprland_tab))
     (writeShellScriptBin "prompt_tab_rename" (builtins.readFile ./scripts/prompt_tab_rename))
+    (writeShellScriptBin "timer" (builtins.readFile ./scripts/timer))
   ];
 
   home.sessionVariables = {
