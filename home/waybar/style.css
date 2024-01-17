@@ -121,9 +121,9 @@ button:hover {
 /*   color: #ebdbb2; */
 /* } */
 
-#custom-workspace_timer {
+#custom-timer.running {
   /* color: #b8bb26; */
-  color: #ebdbb2;
+  color: #98971a;
 }
 
 #window,

@@ -33,11 +33,13 @@ case "$1" in
   get_current)
     if [ -e "$stopped_timer_file" ]; then
       elapsed_time=$(cat "$stopped_timer_file")
-      echo $(format_time $elapsed_time)
+      formatted=$(format_time $elapsed_time)
+      echo "{\"text\":\"$formatted\"}";
     else
       if [ -e "$timer_file" ]; then
         elapsed_time=$(($(date +%s) - $(cat "$timer_file")))
-        echo $(format_time $elapsed_time)
+        formatted=$(format_time $elapsed_time)
+        echo "{\"text\":\"$formatted\",\"class\":\"running\"}";
       fi
     fi
     ;;

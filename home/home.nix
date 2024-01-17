@@ -103,6 +103,10 @@
     lua-language-server
     nodePackages_latest.typescript-language-server
     nixd
+    tailwindcss-language-server
+    stylua
+    prettierd
+    eslint_d
 
     (nerdfonts.override { fonts = [ "JetBrainsMono" "Iosevka" ]; })
 
@@ -158,6 +162,8 @@
     (writeShellScriptBin "rename_hyprland_tab" (builtins.readFile ./scripts/rename_hyprland_tab))
     (writeShellScriptBin "prompt_tab_rename" (builtins.readFile ./scripts/prompt_tab_rename))
     (writeShellScriptBin "timer" (builtins.readFile ./scripts/timer))
+    (writeShellScriptBin "switch_to_external_monitor" (builtins.readFile ./scripts/switch_to_external_monitor))
+    (writeShellScriptBin "switch_to_laptop_monitor" (builtins.readFile ./scripts/switch_to_laptop_monitor))
   ];
 
   home.sessionVariables = {

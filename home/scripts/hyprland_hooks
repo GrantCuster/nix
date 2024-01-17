@@ -31,18 +31,18 @@ handle() {
       fi
       ;;
     monitoradded*)
-      monitor="${1#*>>}"
-      if [ "$monitor" = "DP-4" ]; then
-        hyprctl keyword monitor eDP-1,disabled
-        hyprctl dispatch "workspace 1"
-      fi
+      # monitor="${1#*>>}"
+      # if [ "$monitor" = "DP-4" ]; then
+      #   hyprctl keyword monitor eDP-1,disabled
+      #   hyprctl dispatch "workspace 1"
+      # fi
       ;;
     monitorremoved*)
-      monitor="${1#*>>}"
-      if [ "$monitor" = "DP-4" ]; then
-        hyprctl keyword monitor eDP-1,preferred,auto,1.33333
-        hyprctl dispatch "workspace 1"
-      fi
+      # monitor="${1#*>>}"
+      # if [ "$monitor" = "DP-4" ]; then
+      #   hyprctl keyword monitor eDP-1,preferred,auto,1.33333
+      #   hyprctl dispatch "workspace 1"
+      # fi
       ;;
   esac
 }

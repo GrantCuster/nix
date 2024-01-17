@@ -6,7 +6,7 @@
   "spacing": 0, // Gaps between modules (4px)
   // Choose the order of the modules
   "modules-left": ["hyprland/workspaces"],
-  "modules-right": ["custom/timer", "custom/extra", "battery", "clock"],
+  "modules-right": ["custom/extra", "battery", "custom/timer", "clock"],
   // "modules-center": ["hyprland/window"],
   // Modules configuration
   "hyprland/workspaces": {
@@ -149,9 +149,10 @@
     "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
     // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
   },
-  "custom/workspace_timer": {
-    "exec": "$HOME/.nix-profile/bin/get_current_workspace_time",
-    "interval": 1
+  "custom/timer": {
+    "exec": "$HOME/.nix-profile/bin/timer get_current",
+    "interval": 1,
+    "return-type": "json"
   },
   "custom/date": {
     "exec": "$HOME/.config/waybar/date",
@@ -181,10 +182,4 @@
     "escape": true,
     "signal": 10
   },
-  "custom/timer": {
-    "exec": "sh $HOME/.config/waybar/timer",
-    "interval": 1,
-    "tooltip": false,
-    "escape": true
-  }
 }

@@ -93,8 +93,8 @@
     pulse.enable = true;
   };
 
-  services.jellyfin.enable = true;
-  services.mullvad-vpn.enable = true;
+  # services.jellyfin.enable = true;
+  # services.mullvad-vpn.enable = true;
 
   # QMK keyboard rules
   hardware.keyboard.qmk.enable = true;

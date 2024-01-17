@@ -1,0 +1,5 @@
+#!/bin/bash
+
+hyprctl keyword monitor DP-4,preferred,0x0,auto
+hyprctl keyword monitor DP-5,preferred,0x1440,auto
+hyprctl keyword monitor eDP-1,disable
