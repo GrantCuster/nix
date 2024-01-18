@@ -128,6 +128,7 @@
     jellyfin
     jellyfin-web
     jellyfin-ffmpeg
+    pulseaudio
   ];
 
   environment.sessionVariables = {

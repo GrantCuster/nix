@@ -99,6 +99,10 @@
     socat
     wezterm
 
+    pavucontrol
+    pulsemixer
+    pamixer
+
     tree-sitter
     lua-language-server
     nodePackages_latest.typescript-language-server
@@ -164,6 +168,7 @@
     (writeShellScriptBin "timer" (builtins.readFile ./scripts/timer))
     (writeShellScriptBin "switch_to_external_monitor" (builtins.readFile ./scripts/switch_to_external_monitor))
     (writeShellScriptBin "switch_to_laptop_monitor" (builtins.readFile ./scripts/switch_to_laptop_monitor))
+    (writeShellScriptBin "volume_binds" (builtins.readFile ./scripts/volume_binds))
   ];
 
   home.sessionVariables = {

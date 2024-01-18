@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Function to get the active sink ID
+get_active_sink_id() {
+  pamixer --list-sinks | grep "Running" | awk '{print $1}'
+}
+
+# Check for the command argument
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <command>"
+  exit 1
+fi
+
+# Get the command from the argument
+command="$1"
+
+# Determine which action to perform based on the command
+case "$command" in
+  "decrease")
+    id=$(get_active_sink_id)
+    pamixer --sink "$id" -d 5
+    ;;
+  "increase")
+    id=$(get_active_sink_id)
+    pamixer --sink "$id" -i 5
+    ;;
+  "toggle")
+    id=$(get_active_sink_id)
+    pamixer --sink "$id" -t
+    ;;
+  *)
+    echo "Invalid command. Supported commands: decrease, increase, toggle"
+    exit 1
+    ;;
+esac
+
+exit 0

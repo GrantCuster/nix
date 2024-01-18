@@ -6,7 +6,7 @@
   "spacing": 0, // Gaps between modules (4px)
   // Choose the order of the modules
   "modules-left": ["hyprland/workspaces"],
-  "modules-right": ["custom/extra", "battery", "custom/timer", "clock"],
+  "modules-right": ["custom/extra", "pulseaudio", "battery", "custom/timer", "clock"],
   // "modules-center": ["hyprland/window"],
   // Modules configuration
   "hyprland/workspaces": {
