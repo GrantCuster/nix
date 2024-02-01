@@ -83,6 +83,13 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  # Enable autodiscovery of printers
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
   # Enable sound with pipewire.
   sound.enable = true;
   hardware.pulseaudio.enable = false;
@@ -129,6 +136,7 @@
     jellyfin-web
     jellyfin-ffmpeg
     pulseaudio
+    system-config-printer
   ];
 
   environment.sessionVariables = {

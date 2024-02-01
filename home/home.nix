@@ -103,9 +103,12 @@
     pulsemixer
     pamixer
 
+    swayidle
+
     tree-sitter
     lua-language-server
     nodePackages_latest.typescript-language-server
+    nodePackages_latest.prisma
     nixd
     tailwindcss-language-server
     stylua

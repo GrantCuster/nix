@@ -31,16 +31,16 @@ handle() {
       fi
       ;;
     monitoradded*)
-      monitor="${1#*>>}"
-      if [ "$monitor" = "DP-4" ]; then
-        switch_to_external_monitor
-      fi
+      # monitor="${1#*>>}"
+      # if [ "$monitor" = "DP-4" ]; then
+      #   switch_to_external_monitor
+      # fi
       ;;
     monitorremoved*)
-      monitor="${1#*>>}"
-      if [ "$monitor" = "DP-4" ]; then
-        switch_to_laptop_monitor
-      fi
+      # monitor="${1#*>>}"
+      # if [ "$monitor" = "DP-4" ]; then
+      #   switch_to_laptop_monitor
+      # fi
       ;;
   esac
 }

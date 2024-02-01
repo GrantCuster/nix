@@ -31,10 +31,10 @@ declare -A options=(
 	['make gif from recording']="last_recording_to_gif"
 	['make wide gif from recording']="last_recording_to_gif 1200"
 	['restart libinput gestures']="restart_libinput_gestures"
-	['restart timer']="timer_control reset; timer_control start"
-	['timer off']="timer_control off"
-	['unpause timer']="timer_control start"
-	['pause timer']="timer_control pause"
+	['timer restart']="timer clear; timer start"
+	['timer off']="timer clear"
+	['timer start']="timer start"
+	['pause timer']="timer stop"
 )
 
 option_names_raw=$(printf '%s^' "${!options[@]}")
